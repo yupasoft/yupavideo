@@ -255,6 +255,7 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
     <div class="marca"><span id="isoChico"></span><strong id="nombreEmpresa">Yupavideo</strong></div>
     <div class="der">
       <span class="estado" id="estPC"><span class="punto"></span>Preparando…</span>
+      <button class="sec" id="bSalida" onclick="abrirSalida()" title="Ventana solo con lo que sale en vivo, para la pantalla LED o el proyector">🖥 Salida limpia</button>
       <button class="sec" id="bTextos" onclick="abrirPanelTextos()">✎ Textos</button>
       <button class="sec" id="bLogo" onclick="abrirPanelLogo()">🏷 Logo: ninguno</button>
       <button class="sec" onclick="history.back()">✕ Salir</button>
@@ -617,12 +618,43 @@ function prepararPrograma(){
   if (!gen){
     gen = new MediaStreamTrackGenerator({kind: 'video'});
     genWriter = gen.writable.getWriter();
+    clearInterval(latidoProg);
+    latidoProg = setInterval(() => { if (modoPrograma() !== 'ok' && performance.now() - ultEmision > 120) emitirCuadro(null); }, 100);
     progStream = new MediaStream([gen, adest.stream.getAudioTracks()[0]]);
   }
   $('#vidPC').srcObject = progStream;
+  conectarSalida();
 }
 /* Encaja una imagen (cuadro o video) en el programa, con logo y texto encima */
+function modoPrograma(){
+  const vivo = camVivo ? camaras.get(camVivo) : null;
+  if (pausaPrograma || (vivo && vivo.pausaTx)) return 'pausa';
+  if (!vivo || vivo.estado !== 'vivo') return 'espera';
+  return 'ok';
+}
+/* Placa que ve el público: en pausa (con texto) o esperando cámara (solo logo) */
+function dibujarPlaca(c, W, H, conTexto){
+  const s = Math.min(W, H) / 720;
+  c.fillStyle = '#0C1A2E'; c.fillRect(0, 0, W, H);
+  const im = imagenLogo(cfgLogo.id);
+  if (im){
+    let lh = Math.min(H * (conTexto ? 0.3 : 0.38), W * 0.6 * im.naturalHeight / im.naturalWidth);
+    const lw = lh * im.naturalWidth / im.naturalHeight;
+    const y = conTexto ? H / 2 - lh - 16 * s : (H - lh) / 2;
+    c.drawImage(im, (W - lw) / 2, y, lw, lh);
+  }
+  if (conTexto){
+    c.save(); c.textAlign = 'center'; c.textBaseline = 'top';
+    c.fillStyle = '#F4F7FA'; c.font = `700 ${Math.round(40 * s)}px Sora, sans-serif`;
+    c.fillText('Transmisión en pausa', W / 2, H / 2 + (im ? 18 : -30) * s, W * 0.9);
+    c.fillStyle = '#9BB0C9'; c.font = `400 ${Math.round(24 * s)}px Sora, sans-serif`;
+    c.fillText('Volvemos en un momento', W / 2, H / 2 + (im ? 72 : 24) * s, W * 0.9);
+    c.restore();
+  }
+}
 function pintarPrograma(c, W, H, fuente, fw, fh){
+  const m = modoPrograma();
+  if (m !== 'ok'){ dibujarPlaca(c, W, H, m === 'pausa'); return; }
   c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
   if (fuente && fw && fh){
     const esc = Math.min(W / fw, H / fh), dw = fw * esc, dh = fh * esc;
@@ -641,6 +673,7 @@ function prepararProgramaCanvas(){
   }
   if (lienzoProg.width !== W || lienzoProg.height !== H){ lienzoProg.width = W; lienzoProg.height = H; }
   $('#vidPC').srcObject = progStream;
+  conectarSalida();
   cancelAnimationFrame(bucleProg);
   let ult = 0;
   const paso = t => {
@@ -653,9 +686,11 @@ function prepararProgramaCanvas(){
   bucleProg = requestAnimationFrame(paso);
 }
 /* Cada cuadro de la cámara en vivo se encaja en el programa, con logo y texto encima */
+let ultEmision = 0, latidoProg = null;
 function emitirCuadro(frame){
   const W = oc.width, H = oc.height;
-  pintarPrograma(octx, W, H, frame, frame.displayWidth, frame.displayHeight);
+  ultEmision = performance.now();
+  pintarPrograma(octx, W, H, frame, frame ? frame.displayWidth : 0, frame ? frame.displayHeight : 0);
   const vf = new VideoFrame(oc, {timestamp: Math.round(performance.now() * 1000)});
   if (genWriter.desiredSize !== null && genWriter.desiredSize <= 0){ vf.close(); return; }
   genWriter.write(vf).catch(() => {});
@@ -826,6 +861,7 @@ function elegirCam(id){
     // navegador sin compositor: se muestra la cámara tal cual y la grabación empieza una parte nueva
     progStream = new MediaStream([...cam.stream.getVideoTracks(), ...(adest ? adest.stream.getAudioTracks() : [])]);
     $('#vidPC').srcObject = progStream;
+    conectarSalida();
     if (segPC){ cerrarSegPC(); setTimeout(iniciarSegPC, 300); }
   }
   aplicarAudio();
@@ -920,7 +956,7 @@ function actualizarPrograma(){
   const enPausa = pausaPrograma || !!(vivo && vivo.pausaTx);
   const im = imagenLogo(cfgLogo.id);
   $('#placaLogo').hidden = !im; if (im && $('#placaLogo').src !== im.src) $('#placaLogo').src = im.src;
-  $('#placaPausa').hidden = !enPausa;
+  $('#placaPausa').hidden = !(enPausa && !puedeLogo);
   $('#cortePC').style.display = (camaras.size && !conectado && !enPausa) ? 'flex' : 'none';
   $('#bPausaTx').textContent = pausaPrograma ? '▶ Reanudar transmisión' : '⏸ Pausar transmisión';
   const bloqueado = enPausa || !conectado;
@@ -940,6 +976,71 @@ function cambiarFormato(){
   if (segPC){ cerrarSegPC(); setTimeout(iniciarSegPC, 500); }   // cambia el tamaño: empieza una parte nueva
 }
 function pintarFormato(){ $('#bFormato').textContent = formatoProg === 'h' ? '▭ Horizontal' : '▯ Vertical'; $('#bFormato').hidden = !puedeLogo; }
+
+/* ---------- Salida limpia: ventana solo con el programa, para la pantalla LED ---------- */
+let salidaWin = null, vigiaSalida = null;
+function abrirSalida(){
+  if (salidaWin && !salidaWin.closed){ salidaWin.focus(); return; }
+  const w = window.open('', 'yv_salida', 'popup=yes,width=960,height=560');
+  if (!w){ alert('El navegador bloqueó la ventana. Permite las ventanas emergentes para esta página y vuelve a intentar.'); return; }
+  salidaWin = w;
+  const d = w.document;
+  d.open();
+  d.write(`<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Yupavideo · Salida limpia</title><style>
+html,body{margin:0;height:100%;background:#000;overflow:hidden;cursor:none}
+video{width:100%;height:100%;object-fit:contain;background:#000;display:block}
+#ayuda{position:fixed;left:50%;top:20px;transform:translateX(-50%);background:#0C1A2Ef0;color:#F4F7FA;font:600 15px system-ui,sans-serif;padding:12px 14px;border-radius:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:center;max-width:92%;transition:opacity .4s}
+#ayuda button{font:inherit;border:0;border-radius:8px;padding:8px 12px;background:#2ED3B7;color:#0C1A2E;cursor:pointer}
+#ayuda button.sec{background:#183050;color:#F4F7FA}
+body.mov{cursor:default}
+body:not(.mov) #ayuda{opacity:0;pointer-events:none}
+</style></head><body class="mov"><video id="v" autoplay playsinline muted></video>
+<div id="ayuda"><span>Lleva esta ventana a la pantalla LED y pulsa:</span><span id="pantallas"></span><button id="bFull">⛶ Pantalla completa</button><button id="bSon" class="sec">🔇 Sin sonido</button></div></body></html>`);
+  d.close();
+  const v = d.getElementById('v');
+  conectarSalida();
+  const full = (opc) => { (opc ? d.documentElement.requestFullscreen(opc) : d.documentElement.requestFullscreen()).catch(() => {}); };
+  d.getElementById('bFull').onclick = () => full();
+  v.ondblclick = () => d.fullscreenElement ? d.exitFullscreen() : full();
+  d.getElementById('bSon').onclick = () => {
+    v.muted = !v.muted;
+    d.getElementById('bSon').textContent = v.muted ? '🔇 Sin sonido' : '🔊 Con sonido';
+  };
+  // En Chrome se puede elegir directamente en qué pantalla va
+  if ('getScreenDetails' in w){
+    const cont = d.getElementById('pantallas');
+    const b = d.createElement('button'); b.className = 'sec'; b.textContent = 'Elegir pantalla…'; cont.appendChild(b);
+    b.onclick = async () => {
+      try{
+        const det = await w.getScreenDetails();
+        cont.innerHTML = '';
+        det.screens.forEach((sc, i) => {
+          const x = d.createElement('button');
+          x.textContent = `Pantalla ${i + 1}${sc.isPrimary ? ' (laptop)' : ''} · ${sc.width}×${sc.height}`;
+          x.onclick = () => full({screen: sc});
+          cont.appendChild(x);
+        });
+      }catch(e){ b.textContent = 'Arrástrala a mano'; }
+    };
+  }
+  let t = null;
+  const mover = () => { d.body.classList.add('mov'); w.clearTimeout(t); t = w.setTimeout(() => d.body.classList.remove('mov'), 2500); };
+  d.addEventListener('mousemove', mover); mover();
+  pintarBotonSalida();
+  clearInterval(vigiaSalida);
+  vigiaSalida = setInterval(() => { if (!salidaWin || salidaWin.closed){ salidaWin = null; clearInterval(vigiaSalida); pintarBotonSalida(); } }, 1000);
+}
+function conectarSalida(){
+  if (!salidaWin || salidaWin.closed) return;
+  const v = salidaWin.document.getElementById('v');
+  if (v && v.srcObject !== progStream){ v.srcObject = progStream; v.play().catch(() => {}); }
+}
+function pintarBotonSalida(){
+  const abierta = !!(salidaWin && !salidaWin.closed);
+  $('#bSalida').textContent = abierta ? '🖥 Salida limpia (abierta)' : '🖥 Salida limpia';
+  $('#bSalida').className = abierta ? '' : 'sec';
+}
+function cerrarSalida(){ try{ if (salidaWin && !salidaWin.closed) salidaWin.close(); }catch(e){} salidaWin = null; pintarBotonSalida(); }
 
 /* ---------- Logo sobre el video ---------- */
 let logosEmpresa = [];
@@ -1244,6 +1345,7 @@ function salirMonitor(){
   if (grabandoPC) terminarRecPC();
   clearInterval(statsTimer); clearInterval(cicloPCTimer);
   cancelAnimationFrame(bucleProg);
+  cerrarSalida();
   cerrarPanelLogo(); cerrarPanelTextos();
   [...camaras.values()].forEach(c => quitarCam(c));
   camVivo = null; pausaPrograma = false; salaPC = '';
