@@ -310,6 +310,7 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
         </label>
         <label class="pl-check"><input type="checkbox" id="cSombra" onchange="ponerCfg('sombra',this.checked)"> Sombra suave (se lee mejor en fondos claros)</label>
         <p class="pl-nota" id="sinSoporte" hidden>Este navegador no puede poner el logo en el video. Usa Google Chrome o Microsoft Edge.</p>
+        <p class="pl-nota" id="notaCanvas" hidden>En este equipo el logo y los textos necesitan la app abierta y visible: no cambies de app ni bloquees la pantalla mientras grabas.</p>
       </div>
       <!-- Panel de textos -->
       <div id="panelTextos" class="panelLat" hidden>
@@ -567,7 +568,10 @@ function hayRespaldo(){ return iceActual.length > ICE.length; }
    ===================================================================== */
 const MAX_CAMS = 3;
 const puedeComponer = 'MediaStreamTrackProcessor' in window && 'MediaStreamTrackGenerator' in window && 'VideoFrame' in window && 'OffscreenCanvas' in window;
-const puedeLogo = puedeComponer;
+// Respaldo para iPad / Safari / Firefox: se dibuja en un lienzo visible y se captura (requiere la app en pantalla)
+const modoCanvas = !puedeComponer && !!(HTMLCanvasElement.prototype.captureStream);
+const puedeLogo = puedeComponer || modoCanvas;
+let bucleProg = 0, lienzoProg = null;
 let salaPC = '', desdePC = 0, cicloPCTimer = null, ocupadoPC = false;
 const camaras = new Map();          // id de cámara → datos de esa cámara
 let camVivo = null, audioDe = 'vivo', pausaPrograma = false;
@@ -606,7 +610,7 @@ document.addEventListener('click', () => { if (actx && actx.state === 'suspended
 
 function dimsPrograma(){ return formatoProg === 'h' ? [1280, 720] : [720, 1280]; }
 function prepararPrograma(){
-  if (!puedeComponer) return;
+  if (!puedeComponer){ if (modoCanvas) prepararProgramaCanvas(); return; }
   const [W, H] = dimsPrograma();
   if (!oc){ oc = new OffscreenCanvas(W, H); octx = oc.getContext('2d'); }
   else if (oc.width !== W || oc.height !== H){ oc.width = W; oc.height = H; }
@@ -617,15 +621,41 @@ function prepararPrograma(){
   }
   $('#vidPC').srcObject = progStream;
 }
+/* Encaja una imagen (cuadro o video) en el programa, con logo y texto encima */
+function pintarPrograma(c, W, H, fuente, fw, fh){
+  c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
+  if (fuente && fw && fh){
+    const esc = Math.min(W / fw, H / fh), dw = fw * esc, dh = fh * esc;
+    c.drawImage(fuente, (W - dw) / 2, (H - dh) / 2, dw, dh);
+  }
+  dibujarLogo(c, W, H);
+  dibujarTexto(c, W, H);
+}
+function prepararProgramaCanvas(){
+  const [W, H] = dimsPrograma();
+  if (!lienzoProg){
+    lienzoProg = document.createElement('canvas');
+    lienzoProg.width = W; lienzoProg.height = H;
+    const vt = lienzoProg.captureStream(30).getVideoTracks()[0];
+    progStream = new MediaStream([vt, adest.stream.getAudioTracks()[0]]);
+  }
+  if (lienzoProg.width !== W || lienzoProg.height !== H){ lienzoProg.width = W; lienzoProg.height = H; }
+  $('#vidPC').srcObject = progStream;
+  cancelAnimationFrame(bucleProg);
+  let ult = 0;
+  const paso = t => {
+    bucleProg = requestAnimationFrame(paso);
+    if (t - ult < 30) return; ult = t;
+    const c = lienzoProg.getContext('2d'), cam = camVivo && camaras.get(camVivo), v = cam && cam.video;
+    const listo = v && v.readyState >= 2 && v.videoWidth;
+    pintarPrograma(c, lienzoProg.width, lienzoProg.height, listo ? v : null, listo ? v.videoWidth : 0, listo ? v.videoHeight : 0);
+  };
+  bucleProg = requestAnimationFrame(paso);
+}
 /* Cada cuadro de la cámara en vivo se encaja en el programa, con logo y texto encima */
 function emitirCuadro(frame){
   const W = oc.width, H = oc.height;
-  octx.fillStyle = '#000'; octx.fillRect(0, 0, W, H);
-  const fw = frame.displayWidth, fh = frame.displayHeight;
-  const esc = Math.min(W / fw, H / fh), dw = fw * esc, dh = fh * esc;
-  octx.drawImage(frame, (W - dw) / 2, (H - dh) / 2, dw, dh);
-  dibujarLogo(octx, W, H);
-  dibujarTexto(octx, W, H);
+  pintarPrograma(octx, W, H, frame, frame.displayWidth, frame.displayHeight);
   const vf = new VideoFrame(oc, {timestamp: Math.round(performance.now() * 1000)});
   if (genWriter.desiredSize !== null && genWriter.desiredSize <= 0){ vf.close(); return; }
   genWriter.write(vf).catch(() => {});
@@ -792,7 +822,7 @@ function quitarCam(cam){
 function elegirCam(id){
   const cam = camaras.get(id); if (!cam) return;
   camVivo = id;
-  if (!puedeComponer && cam.stream){
+  if (!puedeComponer && !modoCanvas && cam.stream){
     // navegador sin compositor: se muestra la cámara tal cual y la grabación empieza una parte nueva
     progStream = new MediaStream([...cam.stream.getVideoTracks(), ...(adest ? adest.stream.getAudioTracks() : [])]);
     $('#vidPC').srcObject = progStream;
@@ -811,7 +841,7 @@ function datosDeCam(cam, d){
   if (typeof d.pausaTx === 'boolean' && d.pausaTx !== cam.pausaTx){ cam.pausaTx = d.pausaTx; aplicarAudio(); }
   if (d.orient && d.orient !== cam.orient){
     cam.orient = d.orient;
-    if (!puedeComponer && camVivo === cam.id && segPC){ cerrarSegPC(); setTimeout(iniciarSegPC, 700); }
+    if (!puedeComponer && !modoCanvas && camVivo === cam.id && segPC){ cerrarSegPC(); setTimeout(iniciarSegPC, 700); }
   }
   pintarCams();
 }
@@ -909,7 +939,7 @@ function cambiarFormato(){
   prepararPrograma(); pintarFormato();
   if (segPC){ cerrarSegPC(); setTimeout(iniciarSegPC, 500); }   // cambia el tamaño: empieza una parte nueva
 }
-function pintarFormato(){ $('#bFormato').textContent = formatoProg === 'h' ? '▭ Horizontal' : '▯ Vertical'; $('#bFormato').hidden = !puedeComponer; }
+function pintarFormato(){ $('#bFormato').textContent = formatoProg === 'h' ? '▭ Horizontal' : '▯ Vertical'; $('#bFormato').hidden = !puedeLogo; }
 
 /* ---------- Logo sobre el video ---------- */
 let logosEmpresa = [];
@@ -976,6 +1006,7 @@ function pintarPanelLogo(){
   $('#rOpac').value = cfgLogo.opac; $('#vOpac').textContent = cfgLogo.opac + '%';
   $('#cSombra').checked = cfgLogo.sombra;
   $('#sinSoporte').hidden = puedeLogo;
+  $('#notaCanvas').hidden = !modoCanvas;
   const actual = logosEmpresa.find(x => x.id === cfgLogo.id);
   $('#bLogo').textContent = '🏷 Logo: ' + (actual ? actual.nombre : 'ninguno');
 }
@@ -1058,7 +1089,7 @@ function pintarTextos(){
     </div>`).join('') : '<p class="pl-nota">Aún no hay textos guardados.</p>';
   $('#bTextos').textContent = enPantalla ? '✎ Texto en pantalla' : '✎ Textos';
   $('#bTextos').className = enPantalla ? 'ambar' : 'sec';
-  $('#sinSoporteTx').hidden = puedeComponer;
+  $('#sinSoporteTx').hidden = puedeLogo;
 }
 function dibujarTexto(c, W, H){
   if (!textoVivo) return;
@@ -1212,6 +1243,7 @@ function salirMonitor(){
   if (grabandoPC && !confirm('La laptop está grabando. Si sales, se termina la grabación y se guarda lo grabado. ¿Salir?')) return false;
   if (grabandoPC) terminarRecPC();
   clearInterval(statsTimer); clearInterval(cicloPCTimer);
+  cancelAnimationFrame(bucleProg);
   cerrarPanelLogo(); cerrarPanelTextos();
   [...camaras.values()].forEach(c => quitarCam(c));
   camVivo = null; pausaPrograma = false; salaPC = '';
