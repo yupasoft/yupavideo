@@ -412,16 +412,17 @@ function leerLS(k){ try{ return localStorage.getItem(k); }catch(e){ return null;
 function grabarLS(k,v){ try{ v === null ? localStorage.removeItem(k) : localStorage.setItem(k,v); }catch(e){} }
 function normalizarCodigo(t){ return (t||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8); }
 function verCodigo(c){ return c.length === 8 ? c.slice(0,4) + '-' + c.slice(4) : c; }
+// MP4 primero (lo abren WhatsApp, Facebook, celulares y editores); WebM solo si el navegador no puede MP4
+const FORMATOS = [
+  'video/mp4;codecs=avc1.640028,mp4a.40.2', 'video/mp4;codecs=avc1.4D401F,mp4a.40.2', 'video/mp4;codecs=avc1.42E01F,mp4a.40.2',
+  'video/mp4;codecs=avc1,mp4a.40.2', 'video/mp4;codecs=avc1,opus', 'video/mp4',
+  'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'
+];
 function tipoVideo(){
-  for (const t of ['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'])
-    if (window.MediaRecorder && MediaRecorder.isTypeSupported(t)) return t;
+  for (const t of FORMATOS) if (window.MediaRecorder && MediaRecorder.isTypeSupported(t)) return t;
   return '';
 }
-function tipoVideoCel(){
-  for (const t of ['video/mp4','video/webm;codecs=vp8,opus','video/webm'])
-    if (window.MediaRecorder && MediaRecorder.isTypeSupported(t)) return t;
-  return '';
-}
+const tipoVideoCel = tipoVideo;
 function extDe(m){ return (m||'').includes('mp4') ? 'mp4' : 'webm'; }
 function nombreArchivo(origen, n, ext){
   const d = new Date(), p = x => String(x).padStart(2,'0');
