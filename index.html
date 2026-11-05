@@ -88,7 +88,33 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 #monitor .cab{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
 #monitor .cab .der{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 #monitor .cab button{padding:8px 12px}
-#monitor .zona{flex:1;position:relative;background:#000;display:flex;align-items:center;justify-content:center;min-height:0}
+#monitor .zona{flex:1;display:flex;min-height:0}
+#progBox{position:relative;flex:1;min-width:0;background:#000;display:flex;align-items:center;justify-content:center}
+#tira{width:240px;flex:none;background:var(--panel);border-left:1px solid var(--borde);display:flex;flex-direction:column;gap:10px;padding:10px;overflow:auto}
+@media (max-width:900px){ #monitor .zona{flex-direction:column} #tira{width:auto;flex-direction:row;border-left:0;border-top:1px solid var(--borde);overflow-x:auto} .camCard,.camAgregar{width:190px;flex:none} }
+.camCard{background:#0A1626;border:2px solid var(--borde);border-radius:10px;overflow:hidden;cursor:pointer;position:relative;flex:none}
+.camCard:hover{border-color:var(--gris)}
+.camCard.envivo{border-color:var(--rojo);box-shadow:0 0 0 2px var(--rojo)}
+.camCard.cortada video{opacity:.35}
+.camCard video{width:100%;aspect-ratio:16/9;object-fit:contain;background:#000;display:block}
+.camCard .num{position:absolute;top:6px;left:6px;background:#0C1A2Ecc;border-radius:6px;padding:2px 8px;font-weight:700;font-size:12px;font-family:'IBM Plex Mono',monospace}
+.camCard.envivo .num{background:var(--rojo);color:#fff}
+.camCard .info{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;gap:6px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--sub)}
+.camCard .info button{padding:4px 8px;font-size:11px}
+.camAgregar{border:2px dashed var(--borde);border-radius:10px;padding:14px;text-align:center;color:var(--sub);background:transparent;font-weight:600;flex:none}
+.selAudio{flex-direction:row;align-items:center;gap:6px;color:var(--txt);font-size:14px}
+.selAudio select{padding:9px 10px}
+#avisoPC{position:absolute;top:56px;left:50%;transform:translateX(-50%);background:var(--ambar);color:var(--tinta);font-weight:700;padding:8px 14px;border-radius:10px;z-index:6;font-size:14px;max-width:90%;text-align:center}
+.lista-tx{display:flex;flex-direction:column;gap:8px}
+.tx-item{border:2px solid var(--borde);border-radius:10px;padding:8px 10px;display:flex;gap:8px;align-items:center;justify-content:space-between;background:#0F2036}
+.tx-item.activo{border-color:var(--turq)}
+.tx-item div{min-width:0}
+.tx-item b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx-item span{display:block;font-size:12px;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx-item .bts{display:flex;gap:6px;flex:none}
+.tx-item button{padding:6px 10px;font-size:12px}
+#camara.alAire::after{content:'';position:absolute;inset:0;border:5px solid var(--rojo);pointer-events:none;z-index:4}
+#estCel.alAire{background:var(--rojo);color:#fff!important;padding:4px 10px;border-radius:14px;font-weight:700}
 #vidPC{width:100%;height:100%;object-fit:contain;background:#000}
 #esperaPC{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);overflow:auto}
 #qr{background:#fff;padding:10px;border-radius:10px;width:fit-content;margin:0 auto}
@@ -97,7 +123,7 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 #barraPC{display:flex;gap:8px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--borde);justify-content:center;align-items:center}
 #barraPC button{padding:10px 14px}
 .tag{position:absolute;background:rgba(12,26,46,.8);padding:6px 10px;border-radius:8px;font-size:12px;font-weight:600;font-family:'IBM Plex Mono',monospace}
-#recCel{top:12px;left:12px}#recPCtag{top:12px;right:12px}#calidad{bottom:12px;left:12px;font-weight:500}
+#recPCtag{top:12px;left:12px}#calidad{bottom:12px;left:12px;font-weight:500}
 #cortePC{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#0C1A2Ecc;font-size:20px;font-weight:700;text-align:center;padding:20px;z-index:3}
 #placaPausa{position:absolute;inset:0;display:flex;flex-direction:column;gap:18px;align-items:center;justify-content:center;background:var(--tinta);z-index:2;text-align:center;padding:20px}
 #placaPausa[hidden]{display:none}
@@ -105,8 +131,8 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 #placaPausa .t1{font-size:28px;font-weight:700}
 #placaPausa .t2{color:var(--sub);font-family:'IBM Plex Mono',monospace}
 /* Panel de logo */
-#panelLogo{position:absolute;top:0;right:0;bottom:0;width:min(340px,100%);background:var(--panel);border-left:1px solid var(--borde);padding:14px;overflow:auto;display:flex;flex-direction:column;gap:14px;z-index:5}
-#panelLogo[hidden]{display:none}
+#panelLogo,#panelTextos{position:absolute;top:0;right:0;bottom:0;width:min(340px,100%);background:var(--panel);border-left:1px solid var(--borde);padding:14px;overflow:auto;display:flex;flex-direction:column;gap:14px;z-index:5}
+#panelLogo[hidden],#panelTextos[hidden]{display:none}
 .pl-cab{display:flex;justify-content:space-between;align-items:center}
 .pl-cab button{padding:8px 14px}
 .pl-nota{font-size:13px}
@@ -229,66 +255,85 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
     <div class="marca"><span id="isoChico"></span><strong id="nombreEmpresa">Yupavideo</strong></div>
     <div class="der">
       <span class="estado" id="estPC"><span class="punto"></span>Preparando…</span>
+      <button class="sec" id="bTextos" onclick="abrirPanelTextos()">✎ Textos</button>
       <button class="sec" id="bLogo" onclick="abrirPanelLogo()">🏷 Logo: ninguno</button>
       <button class="sec" onclick="history.back()">✕ Salir</button>
     </div>
   </div>
   <div class="zona">
-    <video id="vidPC" autoplay playsinline muted></video>
-    <div id="placaPausa" hidden>
-      <img id="placaLogo" alt="" hidden>
-      <div class="t1">Transmisión en pausa</div>
-      <div class="t2">Volvemos en un momento</div>
-    </div>
-    <div class="tag" id="recCel" hidden></div>
-    <div class="tag" id="recPCtag" hidden></div>
-    <div class="tag" id="calidad" hidden></div>
-    <div id="cortePC">Señal cortada · reconectando sola…<br>La grabación continúa en cuanto vuelva la imagen.</div>
-    <div id="esperaPC">
-      <div class="centro" style="text-align:center">
-        <p>Escanea con el celular:</p>
-        <div id="qr"></div>
-        <p>o escribe este código en el celular:</p>
-        <div class="codigo" id="cod">····-····</div>
-        <div class="enlace" id="enlace"></div>
-        <button class="sec" onclick="if(confirm('¿Crear un código nuevo? El celular tendrá que escanear otra vez.')) abrirSala(true)">Código nuevo</button>
+    <div id="progBox">
+      <video id="vidPC" autoplay playsinline muted></video>
+      <div id="placaPausa" hidden>
+        <img id="placaLogo" alt="" hidden>
+        <div class="t1">Transmisión en pausa</div>
+        <div class="t2">Volvemos en un momento</div>
       </div>
-    </div>
-    <!-- Panel de logo -->
-    <div id="panelLogo" hidden>
-      <div class="pl-cab"><strong>Logo en la transmisión</strong><button class="sec" onclick="cerrarPanelLogo()">Listo</button></div>
-      <p class="pl-nota">Sale en la imagen de esta laptop y en su grabación. Los logos se guardan en la cuenta de tu organización.</p>
-      <div id="errLogos"></div>
-      <div id="listaLogos" class="pl-lista"></div>
-      <label class="pl-agregar">+ Agregar logo (PNG con fondo transparente es lo mejor)
-        <input type="file" accept="image/*" onchange="agregarLogo(this)">
-      </label>
-      <div class="pl-grupo"><span>Posición</span>
-        <div class="pl-pos">
-          <button data-pos="si" onclick="ponerCfg('pos','si')">↖</button>
-          <button data-pos="sd" onclick="ponerCfg('pos','sd')">↗</button>
-          <button data-pos="ii" onclick="ponerCfg('pos','ii')">↙</button>
-          <button data-pos="id" onclick="ponerCfg('pos','id')">↘</button>
+      <div class="tag" id="recPCtag" hidden></div>
+      <div class="tag" id="calidad" hidden></div>
+      <div id="avisoPC" hidden></div>
+      <div id="cortePC">Sin señal de la cámara en vivo · reconectando sola…<br>La grabación se pausa y sigue en cuanto vuelva la imagen.</div>
+      <div id="esperaPC">
+        <div class="centro" style="text-align:center">
+          <p id="textoEspera">Escanea con el celular:</p>
+          <div id="qr"></div>
+          <p>o escribe este código en el celular:</p>
+          <div class="codigo" id="cod">····-····</div>
+          <div class="enlace" id="enlace"></div>
+          <div class="fila" style="justify-content:center">
+            <button class="sec" id="bCerrarEspera" onclick="$('#esperaPC').hidden = true" hidden>✕ Cerrar</button>
+            <button class="sec" onclick="if(confirm('¿Crear un código nuevo? Las cámaras conectadas siguen, pero las nuevas deberán usar el código nuevo.')) abrirSala(true)">Código nuevo</button>
+          </div>
         </div>
       </div>
-      <label class="pl-grupo">Tamaño <span id="vTam" class="mono"></span>
-        <input type="range" id="rTam" min="10" max="70" oninput="ponerCfg('tam',+this.value)">
-      </label>
-      <label class="pl-grupo">Opacidad <span id="vOpac" class="mono"></span>
-        <input type="range" id="rOpac" min="20" max="100" oninput="ponerCfg('opac',+this.value)">
-      </label>
-      <label class="pl-check"><input type="checkbox" id="cSombra" onchange="ponerCfg('sombra',this.checked)"> Sombra suave (se lee mejor en fondos claros)</label>
-      <p class="pl-nota" id="sinSoporte" hidden>Este navegador no puede poner el logo en el video. Usa Google Chrome o Microsoft Edge.</p>
+      <!-- Panel de logo -->
+      <div id="panelLogo" class="panelLat" hidden>
+        <div class="pl-cab"><strong>Logo en la transmisión</strong><button class="sec" onclick="cerrarPanelLogo()">Listo</button></div>
+        <p class="pl-nota">Sale en la imagen de esta laptop y en su grabación. Los logos se guardan en la cuenta de tu organización.</p>
+        <div id="errLogos"></div>
+        <div id="listaLogos" class="pl-lista"></div>
+        <label class="pl-agregar">+ Agregar logo (PNG con fondo transparente es lo mejor)
+          <input type="file" accept="image/*" onchange="agregarLogo(this)">
+        </label>
+        <div class="pl-grupo"><span>Posición</span>
+          <div class="pl-pos">
+            <button data-pos="si" onclick="ponerCfg('pos','si')">↖</button>
+            <button data-pos="sd" onclick="ponerCfg('pos','sd')">↗</button>
+            <button data-pos="ii" onclick="ponerCfg('pos','ii')">↙</button>
+            <button data-pos="id" onclick="ponerCfg('pos','id')">↘</button>
+          </div>
+        </div>
+        <label class="pl-grupo">Tamaño <span id="vTam" class="mono"></span>
+          <input type="range" id="rTam" min="10" max="70" oninput="ponerCfg('tam',+this.value)">
+        </label>
+        <label class="pl-grupo">Opacidad <span id="vOpac" class="mono"></span>
+          <input type="range" id="rOpac" min="20" max="100" oninput="ponerCfg('opac',+this.value)">
+        </label>
+        <label class="pl-check"><input type="checkbox" id="cSombra" onchange="ponerCfg('sombra',this.checked)"> Sombra suave (se lee mejor en fondos claros)</label>
+        <p class="pl-nota" id="sinSoporte" hidden>Este navegador no puede poner el logo en el video. Usa Google Chrome o Microsoft Edge.</p>
+      </div>
+      <!-- Panel de textos -->
+      <div id="panelTextos" class="panelLat" hidden>
+        <div class="pl-cab"><strong>Textos en pantalla</strong><button class="sec" onclick="cerrarPanelTextos()">Listo</button></div>
+        <p class="pl-nota">Aparecen abajo a la izquierda, en la transmisión y en la grabación. Quedan guardados para el próximo evento.</p>
+        <input id="txL1" placeholder="Línea principal · Ej.: Pastor Juan Pérez" maxlength="60">
+        <input id="txL2" placeholder="Línea secundaria (opcional) · Ej.: Predicación" maxlength="80">
+        <div class="fila"><button onclick="agregarTexto(true)">Agregar y mostrar</button><button class="sec" onclick="agregarTexto(false)">Solo guardar</button></div>
+        <div id="listaTextos" class="lista-tx"></div>
+        <label class="pl-grupo">Color de acento <input type="color" id="txColor" value="#2ED3B7" onchange="txColor = this.value; guardarTextos()"></label>
+        <p class="pl-nota" id="sinSoporteTx" hidden>Los textos necesitan Google Chrome o Microsoft Edge.</p>
+      </div>
     </div>
+    <div id="tira" hidden></div>
   </div>
   <div id="barraPC" hidden>
     <button id="bPausaTx" class="ambar" onclick="pausaTxDesdePC()">⏸ Pausar transmisión</button>
+    <button id="bFormato" class="sec" onclick="cambiarFormato()">▭ Horizontal</button>
+    <label class="selAudio">🎤 <select id="selAudio" onchange="audioDe = this.value; aplicarAudio()"></select></label>
     <button id="bCarpeta" class="sec" onclick="elegirCarpeta()">📁 Elegir carpeta</button>
     <button id="bRecPC" class="rojo" onclick="alternarRecPC()">● Grabar en la laptop</button>
     <button id="bPausaPC" class="sec" onclick="pausarPC()" hidden>⏸ Pausar grabación</button>
-    <button id="bRecRemoto" class="sec" onclick="recRemoto()">Copia de respaldo en el celular</button>
-    <button id="bSonido" class="sec" onclick="sonido()">🔇 Activar sonido</button>
-    <button class="sec" onclick="document.querySelector('#monitor .zona').requestFullscreen?.()">⛶</button>
+    <button id="bSonido" class="sec" onclick="sonido()">🔇 Escuchar</button>
+    <button class="sec" onclick="document.querySelector('#progBox').requestFullscreen?.()" title="Pantalla completa">⛶</button>
   </div>
 </section>
 
@@ -504,25 +549,103 @@ function esperarIce(p){
   });
 }
 
+/* ---------- Servidor de respaldo (TURN): credenciales temporales desde la función yv-turn ---------- */
+let iceActual = ICE.slice(), iceHasta = 0;
+async function obtenerIce(codigo){
+  if (Date.now() < iceHasta) return;
+  try{
+    const r = await fetch(SB_URL + '/functions/v1/yv-turn', {method: 'POST', headers: {'apikey': SB_KEY, 'Content-Type': 'application/json'}, body: JSON.stringify({codigo})});
+    const d = await r.json().catch(() => ({}));
+    if (r.ok && Array.isArray(d.iceServers) && d.iceServers.length){ iceActual = ICE.concat(d.iceServers); iceHasta = Date.now() + 20 * 3600 * 1000; }
+    else iceHasta = Date.now() + 10 * 60 * 1000;
+  }catch(e){ iceHasta = Date.now() + 60 * 1000; }
+}
+function hayRespaldo(){ return iceActual.length > ICE.length; }
+
 /* =====================================================================
-   LAPTOP
+   LAPTOP · varias cámaras, programa único (lo que sale en vivo)
    ===================================================================== */
+const MAX_CAMS = 3;
+const puedeComponer = 'MediaStreamTrackProcessor' in window && 'MediaStreamTrackGenerator' in window && 'VideoFrame' in window && 'OffscreenCanvas' in window;
+const puedeLogo = puedeComponer;
 let salaPC = '', desdePC = 0, cicloPCTimer = null, ocupadoPC = false;
-let pcPC = null, dcPC = null, debounceStream = null;
+const camaras = new Map();          // id de cámara → datos de esa cámara
+let camVivo = null, audioDe = 'vivo', pausaPrograma = false;
 let carpeta = null, grabandoPC = false, pausadoPC = false, grabAutoPausada = false, segPC = null, nSegPC = 0, totalPC = 0, relojPC = null;
-let statsTimer = null, ultBytes = 0, ultT = 0, recRemotoOn = false, orientCel = '', pausaTxCel = false;
+let statsTimer = null, ultBytes = 0, ultT = 0;
+let formatoProg = leerLS('yv_formato') || 'h';
+let actx = null, bus = null, adest = null, monitorGain = null, sonidoOn = false;
+let gen = null, genWriter = null, progStream = null, oc = null, octx = null;
 
 function estadoPC(txt, clase=''){ $('#estPC').innerHTML = `<span class="punto ${clase}"></span>${txt}`; }
+let avisoTimer = null;
+function avisoPC(txt){ $('#avisoPC').textContent = txt; $('#avisoPC').hidden = false; clearTimeout(avisoTimer); avisoTimer = setTimeout(() => $('#avisoPC').hidden = true, 6000); }
 
 async function iniciarMonitor(){
   if (!ctx || !ctx.vigente) return;
+  prepararAudio();                       // dentro del clic: el navegador permite el audio
   entrar('monitor');
   $('#nombreEmpresa').textContent = ctx.empresa || 'Yupavideo';
   if (!window.showDirectoryPicker) $('#bCarpeta').hidden = true;
   pantallaEncendida();
-  cargarLogos();
+  prepararPrograma();
+  cargarLogos(); cargarTextos();
+  pintarFormato(); pintarCams();
   await abrirSala(false);
 }
+function prepararAudio(){
+  if (!actx){
+    actx = new (window.AudioContext || window.webkitAudioContext)();
+    bus = actx.createGain(); adest = actx.createMediaStreamDestination();
+    monitorGain = actx.createGain(); monitorGain.gain.value = 0;
+    bus.connect(adest); bus.connect(monitorGain); monitorGain.connect(actx.destination);
+  }
+  if (actx.state === 'suspended') actx.resume().catch(() => {});
+}
+document.addEventListener('click', () => { if (actx && actx.state === 'suspended') actx.resume().catch(() => {}); });
+
+function dimsPrograma(){ return formatoProg === 'h' ? [1280, 720] : [720, 1280]; }
+function prepararPrograma(){
+  if (!puedeComponer) return;
+  const [W, H] = dimsPrograma();
+  if (!oc){ oc = new OffscreenCanvas(W, H); octx = oc.getContext('2d'); }
+  else if (oc.width !== W || oc.height !== H){ oc.width = W; oc.height = H; }
+  if (!gen){
+    gen = new MediaStreamTrackGenerator({kind: 'video'});
+    genWriter = gen.writable.getWriter();
+    progStream = new MediaStream([gen, adest.stream.getAudioTracks()[0]]);
+  }
+  $('#vidPC').srcObject = progStream;
+}
+/* Cada cuadro de la cámara en vivo se encaja en el programa, con logo y texto encima */
+function emitirCuadro(frame){
+  const W = oc.width, H = oc.height;
+  octx.fillStyle = '#000'; octx.fillRect(0, 0, W, H);
+  const fw = frame.displayWidth, fh = frame.displayHeight;
+  const esc = Math.min(W / fw, H / fh), dw = fw * esc, dh = fh * esc;
+  octx.drawImage(frame, (W - dw) / 2, (H - dh) / 2, dw, dh);
+  dibujarLogo(octx, W, H);
+  dibujarTexto(octx, W, H);
+  const vf = new VideoFrame(oc, {timestamp: Math.round(performance.now() * 1000)});
+  if (genWriter.desiredSize !== null && genWriter.desiredSize <= 0){ vf.close(); return; }
+  genWriter.write(vf).catch(() => {});
+}
+function lectorCam(cam, track){
+  const token = {}; cam.token = token;
+  const reader = new MediaStreamTrackProcessor({track}).readable.getReader();
+  (async () => {
+    while (cam.token === token){
+      let r; try{ r = await reader.read(); }catch(e){ break; }
+      if (r.done) break;
+      const frame = r.value;
+      try{ if (camVivo === cam.id && cam.token === token && gen) emitirCuadro(frame); }catch(e){}
+      frame.close();
+    }
+    try{ reader.cancel(); }catch(e){}
+  })();
+}
+
+/* ---------- Sala y señalización ---------- */
 async function abrirSala(nuevo){
   estadoPC('Abriendo sala…', 'malo');
   try{
@@ -538,11 +661,11 @@ async function abrirSala(nuevo){
   $('#enlace').textContent = url;
   $('#qr').innerHTML = '';
   new QRCode($('#qr'), {text:url, width:180, height:180});
-  // ignora mensajes antiguos y avisa al celular que esta laptop está lista
+  await Promise.race([obtenerIce(salaPC), esperar(4000)]);
   desdePC = 0;
   try{ const f = await rpc('yv_leer', {p_codigo: salaPC, p_para: 'pc', p_desde: 0}, false); (f||[]).forEach(x => desdePC = Math.max(desdePC, x.id)); }catch(e){}
   try{ await rpc('yv_enviar', {p_codigo: salaPC, p_de: 'pc', p_tipo: 'hola', p_datos: {}}, false); }catch(e){}
-  if (!pcPC) estadoPC('Esperando al celular…');
+  actualizarPrograma();
   clearInterval(cicloPCTimer);
   cicloPCTimer = setInterval(cicloPC, 1500);
 }
@@ -555,102 +678,252 @@ async function cicloPC(){
       desdePC = Math.max(desdePC, f.id);
       if (f.tipo === 'oferta' && f.datos && f.datos.sdp) await atenderOferta(f.datos);
     }
-    if (!pcPC || pcPC.connectionState !== 'connected'){
-      if (!$('#esperaPC').hidden) estadoPC('Esperando al celular…');
-    }
+    // cámaras que no vuelven en 90 segundos se retiran de la lista
+    camaras.forEach(c => { if (c.estado !== 'vivo' && Date.now() - (c.cortadaDesde || c.creado) > 90000) quitarCam(c); });
+    actualizarPrograma();
   }catch(e){
     estadoPC(/no válida|vencida/i.test(e.message) ? 'Sala vencida · usa "Código nuevo"' : 'Sin internet · reintentando…', 'malo');
   }finally{ ocupadoPC = false; }
 }
+function numLibre(){ for (let n = 1; n <= MAX_CAMS; n++) if (![...camaras.values()].some(c => c.num === n)) return n; return 0; }
+function crearCam(id){
+  const cam = {id, num: numLibre(), pc: null, dc: null, stream: null, estado: 'conectando', creado: Date.now(), cortadaDesde: 0,
+               pausaTx: false, rec: false, recPausa: false, t: 0, orient: 'h', src: null, gain: null, token: null, el: null, video: null};
+  camaras.set(id, cam);
+  return cam;
+}
 async function atenderOferta(d){
-  if (pcPC){ try{ pcPC.close(); }catch(e){} }
-  const p = new RTCPeerConnection({iceServers: ICE});
-  pcPC = p; dcPC = null;
+  const id = d.cam || 'unica';
+  let cam = camaras.get(id);
+  if (!cam){
+    if (camaras.size >= MAX_CAMS){
+      // si hay una cámara caída, deja su lugar a la nueva
+      const caida = [...camaras.values()].find(c => c.estado !== 'vivo' && c.id !== camVivo) || [...camaras.values()].find(c => c.estado !== 'vivo');
+      if (caida) quitarCam(caida);
+    }
+    if (camaras.size >= MAX_CAMS){
+      rpc('yv_enviar', {p_codigo: salaPC, p_de: 'pc', p_tipo: 'lleno', p_datos: {cam: id}}, false).catch(() => {});
+      avisoPC(`Un celular intentó conectarse, pero ya hay ${MAX_CAMS} cámaras.`);
+      return;
+    }
+    cam = crearCam(id);
+  }
+  if (cam.pc){ try{ cam.pc.close(); }catch(e){} }
+  cam.creado = Date.now();
+  if (cam.estado !== 'vivo') cam.estado = 'conectando';
+  const p = new RTCPeerConnection({iceServers: iceActual});
+  cam.pc = p; cam.dc = null;
   p.ontrack = e => {
-    if (pcPC !== p) return;
+    if (cam.pc !== p) return;
     const s = e.streams && e.streams[0] ? e.streams[0] : new MediaStream([e.track]);
-    clearTimeout(debounceStream);
-    debounceStream = setTimeout(() => { if (pcPC === p) recibirStream(s); }, 250);
+    clearTimeout(cam.deb);
+    cam.deb = setTimeout(() => { if (cam.pc === p) camRecibeStream(cam, s); }, 250);
   };
   p.ondatachannel = e => {
-    if (pcPC !== p) return;
-    dcPC = e.channel;
-    dcPC.onmessage = m => { try{ datosDelCelular(JSON.parse(m.data)); }catch(err){} };
+    if (cam.pc !== p) return;
+    cam.dc = e.channel;
+    cam.dc.onopen = () => enviarTally(cam);
+    cam.dc.onmessage = m => { try{ datosDeCam(cam, JSON.parse(m.data)); }catch(err){} };
   };
   p.onconnectionstatechange = () => {
-    if (pcPC !== p) return;
+    if (cam.pc !== p) return;
     const st = p.connectionState;
-    if (st === 'connected'){ $('#cortePC').style.display = 'none'; estadoPC('En vivo', 'vivo'); }
-    if (st === 'disconnected' || st === 'failed') senalCortada();
+    if (st === 'connected'){ cam.estado = 'vivo'; cam.cortadaDesde = 0; enviarTally(cam); }
+    if (st === 'disconnected' || st === 'failed') camCortada(cam);
+    pintarCams();
   };
+  pintarCams();
   try{
     await p.setRemoteDescription({type: 'offer', sdp: d.sdp});
     await p.setLocalDescription(await p.createAnswer());
     await esperarIce(p);
-    if (pcPC !== p) return;
-    await rpc('yv_enviar', {p_codigo: salaPC, p_de: 'pc', p_tipo: 'respuesta', p_datos: {sesion: d.sesion, sdp: p.localDescription.sdp}}, false);
-    estadoPC('Conectando…', 'malo');
+    if (cam.pc !== p) return;
+    await rpc('yv_enviar', {p_codigo: salaPC, p_de: 'pc', p_tipo: 'respuesta', p_datos: {sesion: d.sesion, cam: id, sdp: p.localDescription.sdp}}, false);
   }catch(e){ estadoPC('Error de conexión · reintentando…', 'malo'); }
 }
-function enviarAlCel(obj){ if (dcPC && dcPC.readyState === 'open') { dcPC.send(JSON.stringify(obj)); return true; } return false; }
-
-function datosDelCelular(d){
+function camRecibeStream(cam, s){
+  cam.stream = s;
+  elCam(cam);
+  cam.video.srcObject = s; cam.video.play().catch(() => {});
+  cam.estado = 'vivo'; cam.cortadaDesde = 0;
+  if (actx){
+    try{ if (cam.gain) cam.gain.disconnect(); if (cam.src) cam.src.disconnect(); }catch(e){}
+    cam.src = null; cam.gain = null;
+    if (s.getAudioTracks().length){
+      cam.src = actx.createMediaStreamSource(s);
+      cam.gain = actx.createGain(); cam.gain.gain.value = 0;
+      cam.src.connect(cam.gain); cam.gain.connect(bus);
+    }
+  }
+  const vt = s.getVideoTracks()[0];
+  if (vt){
+    if (puedeComponer) lectorCam(cam, vt);
+    vt.addEventListener('ended', () => camCortada(cam));
+  }
+  const vivo = camVivo && camaras.get(camVivo);
+  if (!vivo || vivo.estado !== 'vivo' || vivo.id === cam.id) elegirCam(cam.id);
+  else { aplicarAudio(); enviarTally(cam); }
+  $('#esperaPC').hidden = true;
+  pintarCams();
+  vigilarCalidad();
+}
+function camCortada(cam){
+  if (cam.estado === 'cortada') return;
+  cam.estado = 'cortada'; cam.cortadaDesde = Date.now();
+  if (camVivo === cam.id){
+    const otra = [...camaras.values()].filter(c => c.id !== cam.id && c.estado === 'vivo').sort((a, b) => a.num - b.num)[0];
+    if (otra){ elegirCam(otra.id); avisoPC(`La Cámara ${cam.num} perdió la señal: pasé a la Cámara ${otra.num}.`); }
+  }
+  pintarCams();
+}
+function quitarCam(cam){
+  try{ cam.pc && cam.pc.close(); }catch(e){}
+  cam.token = null;
+  try{ if (cam.gain) cam.gain.disconnect(); if (cam.src) cam.src.disconnect(); }catch(e){}
+  if (cam.el) cam.el.remove();
+  camaras.delete(cam.id);
+  if (camVivo === cam.id){
+    camVivo = null;
+    const otra = [...camaras.values()].filter(c => c.estado === 'vivo').sort((a, b) => a.num - b.num)[0];
+    if (otra) elegirCam(otra.id);
+  }
+  pintarCams();
+}
+function elegirCam(id){
+  const cam = camaras.get(id); if (!cam) return;
+  camVivo = id;
+  if (!puedeComponer && cam.stream){
+    // navegador sin compositor: se muestra la cámara tal cual y la grabación empieza una parte nueva
+    progStream = new MediaStream([...cam.stream.getVideoTracks(), ...(adest ? adest.stream.getAudioTracks() : [])]);
+    $('#vidPC').srcObject = progStream;
+    if (segPC){ cerrarSegPC(); setTimeout(iniciarSegPC, 300); }
+  }
+  aplicarAudio();
+  camaras.forEach(c => enviarTally(c));
+  pintarCams();
+}
+function enviarACam(cam, obj){ if (cam && cam.dc && cam.dc.readyState === 'open'){ cam.dc.send(JSON.stringify(obj)); return true; } return false; }
+function enviarTally(cam){ enviarACam(cam, {tally: cam.id === camVivo, num: cam.num}); }
+function datosDeCam(cam, d){
   if (!d || typeof d !== 'object') return;
-  if (typeof d.rec === 'boolean'){
-    recRemotoOn = d.rec;
-    $('#recCel').hidden = !d.rec;
-    $('#recCel').innerHTML = d.pausa
-      ? `<span class="punto pausa"></span>Copia en celular en pausa · ${reloj(d.t||0)}`
-      : `<span class="punto rec"></span>Copia en celular · ${reloj(d.t||0)}`;
-    $('#bRecRemoto').textContent = d.rec ? '■ Terminar copia del celular' : 'Copia de respaldo en el celular';
+  if (d.adios){ quitarCam(cam); return; }
+  if (typeof d.rec === 'boolean'){ cam.rec = d.rec; cam.recPausa = !!d.pausa; cam.t = d.t || 0; }
+  if (typeof d.pausaTx === 'boolean' && d.pausaTx !== cam.pausaTx){ cam.pausaTx = d.pausaTx; aplicarAudio(); }
+  if (d.orient && d.orient !== cam.orient){
+    cam.orient = d.orient;
+    if (!puedeComponer && camVivo === cam.id && segPC){ cerrarSegPC(); setTimeout(iniciarSegPC, 700); }
   }
-  if (typeof d.pausaTx === 'boolean' && d.pausaTx !== pausaTxCel){
-    pausaTxCel = d.pausaTx;
-    aplicarPausaTxPC(pausaTxCel);
-  }
-  // Si el celular cambia de horizontal a vertical, la grabación de la laptop empieza una parte nueva
-  if (d.orient && d.orient !== orientCel){
-    const habia = orientCel; orientCel = d.orient;
-    if (habia && segPC) { cerrarSegPC(); setTimeout(iniciarSegPC, 700); }
-  }
+  pintarCams();
 }
-function pausaTxDesdePC(){
-  if (!enviarAlCel({cmd: 'pausaTx'})) alert('El celular no está conectado.');
+function aplicarAudio(){
+  if (!actx) return;
+  camaras.forEach(c => {
+    if (!c.gain) return;
+    const fuente = audioDe === 'vivo' ? c.id === camVivo : c.id === audioDe;
+    const v = fuente && !c.pausaTx && !pausaPrograma ? 1 : 0;
+    c.gain.gain.setTargetAtTime(v, actx.currentTime, 0.04);
+  });
 }
-function aplicarPausaTxPC(on){
+/* Teclas 1, 2, 3: cambian la cámara en vivo */
+document.addEventListener('keydown', e => {
+  if (!visible('monitor') || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+  const n = parseInt(e.key, 10);
+  if (n >= 1 && n <= MAX_CAMS){ const c = [...camaras.values()].find(x => x.num === n); if (c) elegirCam(c.id); }
+});
+
+/* ---------- Tira de cámaras ---------- */
+function elCam(cam){
+  if (cam.el) return cam.el;
+  const d = document.createElement('div'); d.className = 'camCard';
+  d.innerHTML = '<video autoplay playsinline muted></video><span class="num"></span><div class="info"><span class="est"></span><button class="sec bCopia" title="Copia de respaldo dentro de ese celular">● Copia</button></div>';
+  d.onclick = () => elegirCam(cam.id);
+  d.querySelector('.bCopia').onclick = ev => { ev.stopPropagation(); if (!enviarACam(cam, {cmd: cam.rec ? 'detener' : 'grabar'})) alert('Esa cámara no está conectada.'); };
+  cam.el = d; cam.video = d.querySelector('video');
+  return d;
+}
+function pintarCams(){
+  const tira = $('#tira');
+  [...camaras.values()].sort((a, b) => a.num - b.num).forEach(c => {
+    const d = elCam(c);
+    const vivo = c.id === camVivo;
+    d.classList.toggle('envivo', vivo);
+    d.classList.toggle('cortada', c.estado !== 'vivo');
+    d.querySelector('.num').textContent = `${c.num}${vivo ? ' · EN VIVO' : ''}`;
+    let est = c.estado === 'vivo' ? (c.pausaTx ? '⏸ En pausa' : (vivo ? 'Al aire' : 'Lista')) : (c.estado === 'conectando' ? 'Conectando…' : 'Sin señal');
+    if (c.rec) est += c.recPausa ? ' · copia ⏸' : ' · copia ●';
+    d.querySelector('.est').textContent = est;
+    d.querySelector('.bCopia').textContent = c.rec ? '■ Copia' : '● Copia';
+  });
+  // orden: tarjetas por número y al final el botón de agregar
+  [...camaras.values()].sort((a, b) => a.num - b.num).forEach(c => tira.appendChild(c.el));
+  let add = $('#camAgregar');
+  if (!add){
+    add = document.createElement('button'); add.id = 'camAgregar'; add.className = 'camAgregar';
+    add.onclick = () => { $('#textoEspera').textContent = 'Escanea con el celular que quieres agregar:'; $('#esperaPC').hidden = false; };
+  }
+  add.textContent = `+ Agregar cámara (${camaras.size}/${MAX_CAMS})`;
+  add.hidden = camaras.size >= MAX_CAMS;
+  tira.appendChild(add);
+  tira.hidden = false;
+  if (camaras.size === 0){ $('#textoEspera').textContent = 'Escanea con el celular:'; $('#esperaPC').hidden = false; }
+  $('#bCerrarEspera').hidden = camaras.size === 0;
+  $('#barraPC').hidden = camaras.size === 0;
+  pintarAudioSel();
+  actualizarPrograma();
+}
+function pintarAudioSel(){
+  const sel = $('#selAudio');
+  if (audioDe !== 'vivo' && !camaras.has(audioDe)) audioDe = 'vivo';
+  const opciones = [['vivo', 'Audio de la cámara en vivo']].concat(
+    [...camaras.values()].sort((a, b) => a.num - b.num).map(c => [c.id, `Audio fijo: Cámara ${c.num}`]));
+  const firma = opciones.map(o => o.join('=')).join('|');
+  if (sel.dataset.firma !== firma){
+    sel.innerHTML = opciones.map(([v, t]) => `<option value="${escapar(v)}">${escapar(t)}</option>`).join('');
+    sel.dataset.firma = firma;
+  }
+  sel.value = audioDe;
+}
+/* Estado del programa: placa de pausa, sin señal y pausa automática de la grabación */
+function actualizarPrograma(){
+  const vivo = camVivo ? camaras.get(camVivo) : null;
+  const conectado = !!(vivo && vivo.estado === 'vivo');
+  const enPausa = pausaPrograma || !!(vivo && vivo.pausaTx);
   const im = imagenLogo(cfgLogo.id);
-  $('#placaLogo').hidden = !im;
-  if (im) $('#placaLogo').src = im.src;
-  $('#placaPausa').hidden = !on;
-  $('#bPausaTx').textContent = on ? '▶ Reanudar transmisión' : '⏸ Pausar transmisión';
+  $('#placaLogo').hidden = !im; if (im && $('#placaLogo').src !== im.src) $('#placaLogo').src = im.src;
+  $('#placaPausa').hidden = !enPausa;
+  $('#cortePC').style.display = (camaras.size && !conectado && !enPausa) ? 'flex' : 'none';
+  $('#bPausaTx').textContent = pausaPrograma ? '▶ Reanudar transmisión' : '⏸ Pausar transmisión';
+  const bloqueado = enPausa || !conectado;
   if (grabandoPC){
-    if (on && !pausadoPC){ pausarPC(); grabAutoPausada = true; }
-    else if (!on && grabAutoPausada && pausadoPC){ pausarPC(); grabAutoPausada = false; }
+    if (bloqueado && !pausadoPC){ pausarPC(); grabAutoPausada = true; }
+    else if (!bloqueado && grabAutoPausada && pausadoPC){ pausarPC(); grabAutoPausada = false; }
   }
+  const conectadas = [...camaras.values()].filter(c => c.estado === 'vivo').length;
+  if (!camaras.size) estadoPC('Esperando cámaras…');
+  else estadoPC(`${conectadas}/${camaras.size} cámara${camaras.size > 1 ? 's' : ''} · en vivo: ${vivo ? 'Cámara ' + vivo.num : '—'}`, conectado ? 'vivo' : 'malo');
 }
+function pausaTxDesdePC(){ pausaPrograma = !pausaPrograma; aplicarAudio(); actualizarPrograma(); }
+function cambiarFormato(){
+  formatoProg = formatoProg === 'h' ? 'v' : 'h';
+  grabarLS('yv_formato', formatoProg);
+  prepararPrograma(); pintarFormato();
+  if (segPC){ cerrarSegPC(); setTimeout(iniciarSegPC, 500); }   // cambia el tamaño: empieza una parte nueva
+}
+function pintarFormato(){ $('#bFormato').textContent = formatoProg === 'h' ? '▭ Horizontal' : '▯ Vertical'; $('#bFormato').hidden = !puedeComponer; }
 
 /* ---------- Logo sobre el video ---------- */
-const puedeLogo = 'MediaStreamTrackProcessor' in window && 'MediaStreamTrackGenerator' in window && 'VideoFrame' in window;
 let logosEmpresa = [];
 const CFG_BASE = {id:'', elegido:false, pos:'sd', tam:25, opac:100, sombra:true};
 let cfgLogo = Object.assign({}, CFG_BASE);
 const imgLogos = {};
-let compositor = null;
 function claveCfg(){ return 'yv_cfglogo_' + (ctx && ctx.empresa_id || 'x'); }
-
 async function cargarLogos(){
-  // la configuración del logo se guarda por organización (una misma laptop puede usar varias cuentas)
   cfgLogo = Object.assign({}, CFG_BASE);
   try{ Object.assign(cfgLogo, JSON.parse(leerLS(claveCfg()) || '{}')); }catch(e){}
   $('#errLogos').textContent = '';
-  try{
-    logosEmpresa = await sb('/rest/v1/logos?select=id,nombre,imagen&order=creado_el.asc') || [];
-  }catch(e){
-    logosEmpresa = [];
-    $('#errLogos').textContent = 'No se pudieron cargar los logos: ' + e.message;
-  }
+  try{ logosEmpresa = await sb('/rest/v1/logos?select=id,nombre,imagen&order=creado_el.asc') || []; }
+  catch(e){ logosEmpresa = []; $('#errLogos').textContent = 'No se pudieron cargar los logos: ' + e.message; }
   if (cfgLogo.id && !logosEmpresa.find(l => l.id === cfgLogo.id)) { cfgLogo.id = ''; cfgLogo.elegido = false; }
-  // si nunca se eligió nada, se usa el primer logo de la organización
   if (!cfgLogo.id && !cfgLogo.elegido && logosEmpresa.length) cfgLogo.id = logosEmpresa[0].id;
   if (cfgLogo.id) imagenLogo(cfgLogo.id);
   pintarPanelLogo();
@@ -678,34 +951,10 @@ function dibujarLogo(c, W, H){
   c.drawImage(im, x, y, lw, lh);
   c.restore();
 }
-/* Cada cuadro que llega del celular pasa por aquí: si hay logo, se pinta encima. */
-function componer(s){
-  if (compositor) { try{ compositor.abort(); }catch(e){} compositor = null; }
-  const vt = s.getVideoTracks()[0];
-  if (!puedeLogo || !vt) return s;
-  const proc = new MediaStreamTrackProcessor({track: vt});
-  const gen = new MediaStreamTrackGenerator({kind: 'video'});
-  let oc = null, octx = null;
-  const ctrl = new AbortController(); compositor = ctrl;
-  const paso = new TransformStream({
-    transform(frame, salidaCuadros){
-      if (!imagenLogo(cfgLogo.id)) { salidaCuadros.enqueue(frame); return; }
-      const W = frame.displayWidth, H = frame.displayHeight;
-      if (!oc || oc.width !== W || oc.height !== H){ oc = new OffscreenCanvas(W, H); octx = oc.getContext('2d'); }
-      octx.drawImage(frame, 0, 0, W, H);
-      dibujarLogo(octx, W, H);
-      const nuevo = new VideoFrame(oc, {timestamp: frame.timestamp, duration: frame.duration || undefined});
-      frame.close();
-      salidaCuadros.enqueue(nuevo);
-    }
-  });
-  proc.readable.pipeThrough(paso, {signal: ctrl.signal}).pipeTo(gen.writable, {signal: ctrl.signal}).catch(() => {});
-  return new MediaStream([gen, ...s.getAudioTracks()]);
-}
 function guardarCfgLogo(){ grabarLS(claveCfg(), JSON.stringify(cfgLogo)); }
 function ponerCfg(k, v){ cfgLogo[k] = v; guardarCfgLogo(); pintarPanelLogo(); }
 function elegirLogo(id){ cfgLogo.id = id; cfgLogo.elegido = true; imagenLogo(id); guardarCfgLogo(); pintarPanelLogo(); }
-function abrirPanelLogo(){ pintarPanelLogo(); $('#panelLogo').hidden = false; }
+function abrirPanelLogo(){ cerrarPanelTextos(); pintarPanelLogo(); $('#panelLogo').hidden = false; }
 function cerrarPanelLogo(){ $('#panelLogo').hidden = true; }
 function pintarPanelLogo(){
   const lista = $('#listaLogos'); lista.innerHTML = '';
@@ -766,24 +1015,81 @@ async function quitarLogo(id){
   }catch(e){ alert('No se pudo quitar: ' + e.message); }
 }
 
-function recibirStream(s){
-  cerrarSegPC();
-  $('#vidPC').srcObject = componer(s);
-  $('#esperaPC').hidden = true;
-  $('#barraPC').hidden = false;
-  $('#cortePC').style.display = 'none';
-  estadoPC('En vivo', 'vivo');
-  s.getTracks().forEach(t => t.addEventListener('ended', senalCortada));
-  if (grabandoPC) setTimeout(iniciarSegPC, 300);
-  vigilarCalidad();
+/* ---------- Textos en pantalla (zócalos) ---------- */
+let textos = [], textoVivo = null, txColor = '#2ED3B7';
+function claveTx(){ return 'yv_textos_' + (ctx && ctx.empresa_id || 'x'); }
+function cargarTextos(){
+  try{ const d = JSON.parse(leerLS(claveTx()) || '{}'); textos = d.lista || []; txColor = d.color || '#2ED3B7'; }
+  catch(e){ textos = []; txColor = '#2ED3B7'; }
+  $('#txColor').value = txColor;
+  try{ document.fonts && document.fonts.load('700 40px Sora'); document.fonts && document.fonts.load('400 24px Sora'); }catch(e){}
+  pintarTextos();
 }
-function senalCortada(){
-  cerrarSegPC();
-  if (visible('monitor') && (grabandoPC || $('#vidPC').srcObject)) {
-    $('#cortePC').style.display = 'flex';
-    estadoPC('Señal cortada · esperando al celular…', 'malo');
+function guardarTextos(){ grabarLS(claveTx(), JSON.stringify({lista: textos, color: txColor})); }
+function agregarTexto(mostrarYa){
+  const l1 = $('#txL1').value.trim(), l2 = $('#txL2').value.trim();
+  if (!l1){ $('#txL1').focus(); return; }
+  const t = {id: 't' + Date.now(), l1, l2};
+  textos.unshift(t); guardarTextos();
+  $('#txL1').value = ''; $('#txL2').value = '';
+  if (mostrarYa) mostrarTexto(t.id); else pintarTextos();
+}
+function mostrarTexto(id){
+  const t = textos.find(x => x.id === id); if (!t) return;
+  textoVivo = {id, l1: t.l1, l2: t.l2, t0: performance.now(), sale: 0};
+  pintarTextos();
+}
+function ocultarTexto(){ if (textoVivo && !textoVivo.sale) textoVivo.sale = performance.now(); pintarTextos(); }
+function borrarTexto(id){
+  if (textoVivo && textoVivo.id === id) ocultarTexto();
+  textos = textos.filter(x => x.id !== id); guardarTextos(); pintarTextos();
+}
+function abrirPanelTextos(){ cerrarPanelLogo(); pintarTextos(); $('#panelTextos').hidden = false; }
+function cerrarPanelTextos(){ $('#panelTextos').hidden = true; }
+function pintarTextos(){
+  const enPantalla = textoVivo && !textoVivo.sale ? textoVivo.id : null;
+  $('#listaTextos').innerHTML = textos.length ? textos.map(t => `
+    <div class="tx-item${t.id === enPantalla ? ' activo' : ''}">
+      <div><b>${escapar(t.l1)}</b>${t.l2 ? `<span>${escapar(t.l2)}</span>` : ''}</div>
+      <div class="bts">${t.id === enPantalla
+        ? `<button class="ambar" onclick="ocultarTexto()">Ocultar</button>`
+        : `<button onclick="mostrarTexto('${t.id}')">Mostrar</button>`}
+        <button class="sec" onclick="borrarTexto('${t.id}')" title="Borrar">✕</button></div>
+    </div>`).join('') : '<p class="pl-nota">Aún no hay textos guardados.</p>';
+  $('#bTextos').textContent = enPantalla ? '✎ Texto en pantalla' : '✎ Textos';
+  $('#bTextos').className = enPantalla ? 'ambar' : 'sec';
+  $('#sinSoporteTx').hidden = puedeComponer;
+}
+function dibujarTexto(c, W, H){
+  if (!textoVivo) return;
+  const ahora = performance.now();
+  let a = Math.min(1, (ahora - textoVivo.t0) / 350);
+  if (textoVivo.sale){
+    a = Math.max(0, 1 - (ahora - textoVivo.sale) / 350);
+    if (a <= 0){ textoVivo = null; setTimeout(pintarTextos, 0); return; }
   }
+  const s = Math.min(W, H) / 720;
+  const f1 = Math.round(38 * s), f2 = Math.round(24 * s), pad = Math.round(18 * s), barra = Math.round(8 * s), sep = Math.round(8 * s);
+  c.save();
+  c.font = `700 ${f1}px Sora, sans-serif`; const w1 = c.measureText(textoVivo.l1).width;
+  c.font = `400 ${f2}px Sora, sans-serif`; const w2 = textoVivo.l2 ? c.measureText(textoVivo.l2).width : 0;
+  const ancho = Math.min(W * 0.9, Math.max(w1, w2) + pad * 2 + barra);
+  const alto = pad * 2 + f1 + (textoVivo.l2 ? f2 + sep : 0);
+  const x = Math.round(W * 0.04) - (1 - a) * 40 * s, y = H - Math.round(H * 0.08) - alto;
+  c.globalAlpha = a;
+  c.fillStyle = 'rgba(12,26,46,0.86)'; c.fillRect(x, y, ancho, alto);
+  c.fillStyle = txColor; c.fillRect(x, y, barra, alto);
+  c.textBaseline = 'top';
+  c.fillStyle = '#F4F7FA'; c.font = `700 ${f1}px Sora, sans-serif`;
+  c.fillText(textoVivo.l1, x + barra + pad, y + pad, ancho - barra - pad * 2);
+  if (textoVivo.l2){
+    c.fillStyle = '#C9D6E6'; c.font = `400 ${f2}px Sora, sans-serif`;
+    c.fillText(textoVivo.l2, x + barra + pad, y + pad + f1 + sep, ancho - barra - pad * 2);
+  }
+  c.restore();
 }
+
+/* ---------- Grabación del programa ---------- */
 async function elegirCarpeta(){
   try{
     carpeta = await window.showDirectoryPicker({mode:'readwrite'});
@@ -804,7 +1110,7 @@ function alternarRecPC(){
   $('#recPCtag').hidden = false;
   clearInterval(relojPC); relojPC = setInterval(tickPC, 1000);
   iniciarSegPC();
-  if (pausaTxCel){ pausarPC(); grabAutoPausada = true; }
+  actualizarPrograma();
   pintarPC();
 }
 function terminarRecPC(){
@@ -837,11 +1143,11 @@ function tickPC(){
 function pintarPC(){
   $('#recPCtag').innerHTML = pausadoPC
     ? `<span class="punto pausa"></span>Grabación en pausa · ${reloj(totalPC)} · parte ${nSegPC}`
-    : `<span class="punto rec"></span>Grabando laptop · ${reloj(totalPC)} · parte ${nSegPC}`;
+    : `<span class="punto rec"></span>Grabando · ${reloj(totalPC)} · parte ${nSegPC}`;
 }
 async function iniciarSegPC(){
-  const s = $('#vidPC').srcObject;
-  if (!s || !grabandoPC || pausadoPC || segPC) return;
+  const s = progStream;
+  if (!s || !grabandoPC || segPC) return;
   nSegPC++;
   const mt = tipoVideo();
   const nombre = nombreArchivo('laptop', nSegPC, extDe(mt));
@@ -864,6 +1170,7 @@ async function iniciarSegPC(){
     else descargar(seg.trozos, seg.rec.mimeType, seg.nombre);
   };
   seg.rec.start(1000);
+  if (pausadoPC) seg.rec.pause();
   pintarPC();
 }
 function cerrarSegPC(){
@@ -871,27 +1178,31 @@ function cerrarSegPC(){
   const seg = segPC; segPC = null;
   if (seg.rec && seg.rec.state !== 'inactive') seg.rec.stop();
 }
-function recRemoto(){ if (!enviarAlCel({cmd: recRemotoOn ? 'detener' : 'grabar'})) alert('El celular no está conectado.'); }
 function sonido(){
-  const v = $('#vidPC'); v.muted = !v.muted;
-  $('#bSonido').textContent = v.muted ? '🔇 Activar sonido' : '🔊 Silenciar';
+  sonidoOn = !sonidoOn;
+  prepararAudio();
+  if (monitorGain) monitorGain.gain.setTargetAtTime(sonidoOn ? 1 : 0, actx.currentTime, 0.03);
+  $('#bSonido').textContent = sonidoOn ? '🔊 Silenciar' : '🔇 Escuchar';
 }
 function vigilarCalidad(){
   clearInterval(statsTimer); ultBytes = 0; ultT = 0;
+  let ultCam = null;
   statsTimer = setInterval(async () => {
-    const pc = pcPC; if (!pc) return;
+    const cam = camVivo && camaras.get(camVivo);
+    if (!cam || !cam.pc){ $('#calidad').hidden = true; return; }
+    if (ultCam !== cam.id){ ultCam = cam.id; ultBytes = 0; ultT = 0; }
     try{
-      const st = await pc.getStats();
+      const st = await cam.pc.getStats();
       st.forEach(r => {
         if (r.type === 'inbound-rtp' && r.kind === 'video'){
-          const ahora = r.timestamp, kbps = ultT ? Math.round((r.bytesReceived-ultBytes)*8/(ahora-ultT)) : 0;
+          const ahora = r.timestamp, kbps = ultT ? Math.round((r.bytesReceived - ultBytes) * 8 / (ahora - ultT)) : 0;
           ultBytes = r.bytesReceived; ultT = ahora;
           const fps = Math.round(r.framesPerSecond || 0), ancho = r.frameWidth || 0, alto = r.frameHeight || 0;
           const bueno = fps >= 24 && kbps > 1200;
           $('#calidad').hidden = false;
-          $('#calidad').innerHTML = pausaTxCel
+          $('#calidad').innerHTML = cam.pausaTx || pausaPrograma
             ? `<span class="punto pausa"></span>Transmisión en pausa`
-            : `<span class="punto ${bueno?'vivo':'malo'}"></span>${ancho}×${alto} · ${fps} fps · ${(kbps/1000).toFixed(1)} Mbps ${bueno?'· señal buena':'· señal débil'}`;
+            : `<span class="punto ${bueno ? 'vivo' : 'malo'}"></span>Cámara ${cam.num} · ${ancho}×${alto} · ${fps} fps · ${(kbps/1000).toFixed(1)} Mbps ${bueno ? '· señal buena' : '· señal débil'}`;
         }
       });
     }catch(e){}
@@ -901,13 +1212,13 @@ function salirMonitor(){
   if (grabandoPC && !confirm('La laptop está grabando. Si sales, se termina la grabación y se guarda lo grabado. ¿Salir?')) return false;
   if (grabandoPC) terminarRecPC();
   clearInterval(statsTimer); clearInterval(cicloPCTimer);
-  if (compositor) { try{ compositor.abort(); }catch(e){} compositor = null; }
-  cerrarPanelLogo();
-  try{ pcPC && pcPC.close(); }catch(e){}
-  pcPC = null; dcPC = null; orientCel = ''; pausaTxCel = false;
+  cerrarPanelLogo(); cerrarPanelTextos();
+  [...camaras.values()].forEach(c => quitarCam(c));
+  camVivo = null; pausaPrograma = false; salaPC = '';
   $('#vidPC').srcObject = null;
-  $('#esperaPC').hidden = false; $('#barraPC').hidden = true; $('#placaPausa').hidden = true;
-  $('#cortePC').style.display = 'none'; $('#calidad').hidden = true; $('#recCel').hidden = true;
+  $('#esperaPC').hidden = false; $('#barraPC').hidden = true; $('#placaPausa').hidden = true; $('#tira').hidden = true;
+  $('#cortePC').style.display = 'none'; $('#calidad').hidden = true;
+  if (sonidoOn) sonido();
   soltarPantalla();
   mostrar('inicio');
   return true;
@@ -921,6 +1232,10 @@ let stream = null, salida = null, pistaLienzo = null, lienzo = null, ctx2d = nul
 let facing = 'environment', salaCod = '', calidad = '720';
 let orient = leerLS('yv_orient') || 'h', volteado = false;
 let pcCel = null, dcCel = null, sesionCel = '', desdeCel = 0, cicloCelTimer = null, ocupadoCel = false;
+let tally = false, numCam = 0, llenoHasta = 0, ultSondeo = 0;
+// Identificador fijo de este celular: así la laptop lo reconoce al reconectarse
+let camId = leerLS('yv_cam');
+if (!camId){ camId = 'c' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); grabarLS('yv_cam', camId); }
 let ofertaEnviada = 0, ultimoBien = 0;
 let grab = null, grabandoCel = false, pausadoCel = false, relojCel = null, nSegCel = 0, totalCel = 0, segAcumCel = 0;
 let pausadoTx = false, copiaAutoPausada = false;
@@ -1127,6 +1442,8 @@ async function iniciarCamara(){
   try{ await abrirCamara(); }
   catch(e){ aviso('No pude abrir la cámara. Da permiso de cámara y micrófono al navegador y vuelve a intentar.'); return; }
   pantallaEncendida();
+  await Promise.race([obtenerIce(salaCod), esperar(4000)]);
+  tally = false; numCam = 0; llenoHasta = 0;
   desdeCel = 0;
   try{ const f = await rpc('yv_leer', {p_codigo: salaCod, p_para: 'cel', p_desde: 0}, false); (f||[]).forEach(x => desdeCel = Math.max(desdeCel, x.id)); }catch(e){}
   conectar();
@@ -1139,7 +1456,7 @@ async function conectar(){
   sesionCel = Math.random().toString(36).slice(2, 10);
   ofertaEnviada = Date.now();
   estadoCel('Conectando…', 'malo');
-  const p = new RTCPeerConnection({iceServers: ICE});
+  const p = new RTCPeerConnection({iceServers: iceActual});
   pcCel = p;
   salida.getTracks().forEach(t => p.addTrack(t, salida));
   const dc = p.createDataChannel('control', {ordered: true});
@@ -1151,17 +1468,18 @@ async function conectar(){
     if (d.cmd === 'grabar') empezarCel();
     if (d.cmd === 'detener') detenerCel();
     if (d.cmd === 'pausaTx') alternarPausaTx();
+    if (typeof d.tally === 'boolean'){ tally = d.tally; numCam = d.num || numCam; pintarTally(); }
   };
   p.onconnectionstatechange = () => {
     if (pcCel !== p) return;
-    if (p.connectionState === 'connected'){ ultimoBien = Date.now(); aviso(''); estadoCel('En vivo en la laptop', 'vivo'); subirCalidad(p); }
-    if (p.connectionState === 'disconnected' || p.connectionState === 'failed') estadoCel('Conexión perdida · reconectando…', 'malo');
+    if (p.connectionState === 'connected'){ ultimoBien = Date.now(); aviso(''); pintarTally(); subirCalidad(p); }
+    if (p.connectionState === 'disconnected' || p.connectionState === 'failed'){ tally = false; pintarTally(); estadoCel('Conexión perdida · reconectando…', 'malo'); }
   };
   try{
     await p.setLocalDescription(await p.createOffer());
     await esperarIce(p);
     if (pcCel !== p) return;
-    await rpc('yv_enviar', {p_codigo: salaCod, p_de: 'cel', p_tipo: 'oferta', p_datos: {sesion: sesionCel, sdp: p.localDescription.sdp}}, false);
+    await rpc('yv_enviar', {p_codigo: salaCod, p_de: 'cel', p_tipo: 'oferta', p_datos: {sesion: sesionCel, cam: camId, sdp: p.localDescription.sdp}}, false);
     ofertaEnviada = Date.now();
   }catch(e){
     estadoCel(/no válida|vencida/i.test(e.message) ? 'Sala vencida' : 'Sin internet · reintentando…', 'malo');
@@ -1170,6 +1488,10 @@ async function conectar(){
 }
 async function cicloCel(){
   if (ocupadoCel || !salaCod || !visible('camara') || !salida) return;
+  // conectado: se consulta cada 5 s (menos carga); buscando: cada 1,5 s
+  const conectado = pcCel && pcCel.connectionState === 'connected';
+  if (conectado && Date.now() - ultSondeo < 5000) return;
+  ultSondeo = Date.now();
   ocupadoCel = true;
   try{
     const vt = stream && stream.getVideoTracks()[0];
@@ -1182,13 +1504,29 @@ async function cicloCel(){
         try{ await pcCel.setRemoteDescription({type: 'answer', sdp: f.datos.sdp}); }catch(e){}
       }
       if (f.tipo === 'hola') reiniciar = true;   // la laptop se reinició: se vuelve a ofrecer
+      if (f.tipo === 'lleno' && f.datos && f.datos.cam === camId){
+        llenoHasta = Date.now() + 30000;
+        estadoCel('Cupo lleno', 'malo');
+        aviso('La laptop ya tiene 3 cámaras conectadas. Pide que retiren una; vuelvo a intentar sola cada 30 segundos.');
+      }
     }
     const st = pcCel ? pcCel.connectionState : 'none';
     if (st === 'connected') ultimoBien = Date.now();
+    if (Date.now() < llenoHasta) return;
     if (reiniciar || (st !== 'connected' && Date.now() - ofertaEnviada > 15000 && Date.now() - ultimoBien > 8000)) conectar();
   }catch(e){
     estadoCel('Sin internet · reintentando…', 'malo');
   }finally{ ocupadoCel = false; }
+}
+/* Aviso EN VIVO: esta cámara es la que está saliendo en la laptop */
+function pintarTally(){
+  const conectado = pcCel && pcCel.connectionState === 'connected';
+  $('#camara').classList.toggle('alAire', !!(conectado && tally));
+  $('#estCel').classList.toggle('alAire', !!(conectado && tally));
+  if (!conectado) return;
+  if (!numCam) estadoCel('Conectada a la laptop', 'vivo');
+  else if (tally) estadoCel(`EN VIVO · Cámara ${numCam}`, 'rec');
+  else estadoCel(`Cámara ${numCam} · en espera`, 'vivo');
 }
 async function subirCalidad(pc){
   const tope = calidad === '1080' ? 6000000 : 3500000;
@@ -1323,6 +1661,9 @@ async function girar(){
 function salirCamara(){
   responderDlg(false);
   detenerCel();
+  try{ if (dcCel && dcCel.readyState === 'open') dcCel.send(JSON.stringify({adios: true})); }catch(e){}   // la laptop la retira al instante
+  tally = false; numCam = 0;
+  $('#camara').classList.remove('alAire'); $('#estCel').classList.remove('alAire');
   clearInterval(cicloCelTimer);
   cancelAnimationFrame(bucle);
   try{ pcCel && pcCel.close(); }catch(e){}
