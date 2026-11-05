@@ -78,6 +78,11 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 .link-cel{background:transparent;color:var(--gris);font-weight:500;font-size:14px;text-decoration:underline;text-underline-offset:3px;padding:6px;align-self:center}
 .link-cel:hover{color:var(--claro)}
 #errLogos{color:#FFB4A9;font-size:13px}
+#escaner{position:fixed;inset:0;background:#000;z-index:50}
+#vidEsc{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.esc-marco{position:absolute;left:50%;top:45%;width:min(70vw,300px);aspect-ratio:1;transform:translate(-50%,-50%);border:3px solid var(--turq);border-radius:18px;box-shadow:0 0 0 2000px #0C1A2E99}
+.esc-txt{position:absolute;left:16px;right:16px;top:calc(45% + min(35vw,150px) + 24px);text-align:center;color:#fff;font-weight:600}
+.esc-cerrar{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom) + 32px);transform:translateX(-50%)}
 /* Laptop */
 #monitor{display:flex;flex-direction:column;height:100vh}
 #monitor .cab{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
@@ -183,6 +188,8 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
       <!-- Celular -->
       <div class="acceso-cuerpo" id="tarjetaCel" hidden>
         <p id="textoCel">Escanea el QR que aparece en la laptop, o escribe su código.</p>
+        <button id="bEscanear" class="b-ingresar" style="background:var(--turq);color:var(--tinta)" onclick="abrirEscaner()">📷 Escanear el QR de la laptop</button>
+        <p id="oEscribe" style="text-align:center;font-size:13px;margin:-4px 0">o escribe el código</p>
         <input id="codIn" class="codigoIn" maxlength="9" placeholder="XXXX-XXXX" autocomplete="off">
         <label>Calidad de transmisión
           <select id="calSel">
@@ -207,6 +214,14 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
     <div class="pie">Yupavideo · <a href="https://yupasoft.github.io" target="_blank" rel="noopener">Yupasoft</a> · software a medida</div>
   </div>
 </section>
+
+<!-- ============ ESCÁNER DE QR (celular) ============ -->
+<div id="escaner" hidden>
+  <video id="vidEsc" playsinline muted></video>
+  <div class="esc-marco"></div>
+  <div class="esc-txt">Apunta al código QR que muestra la laptop</div>
+  <button class="b-sec esc-cerrar" onclick="cerrarEscaner()">✕ Cancelar</button>
+</div>
 
 <!-- ============ LAPTOP ============ -->
 <section id="monitor" class="pantalla" hidden>
@@ -1005,13 +1020,78 @@ async function prepararCelular(){
   $('#codIn').value = verCodigo(sala);
   modoCelular(true);
   $('#linkLogin').hidden = true;
-  $('#bCamara').textContent = '▶ Empezar a transmitir';
-  $('#bCamara').style.padding = '18px'; $('#bCamara').style.fontSize = '19px';
+  await validarCodigoCel(sala);
+}
+/* Confirma el código y deja el celular listo para empezar */
+async function validarCodigoCel(cod){
+  $('#celError').textContent = '';
   try{
-    const i = await rpc('yv_info_sala', {p_codigo: sala}, false);
-    if (i.valida) $('#textoCel').innerHTML = `Este celular será la cámara de <b>${escapar(i.empresa)}</b>. Toca el botón y acepta los permisos de cámara y micrófono.`;
-    else $('#celError').textContent = 'Este código ya no es válido. Escanea de nuevo el QR que muestra la laptop.';
+    const i = await rpc('yv_info_sala', {p_codigo: cod}, false);
+    if (i.valida){
+      $('#textoCel').innerHTML = `Este celular será la cámara de <b>${escapar(i.empresa)}</b>. Toca el botón y acepta los permisos de cámara y micrófono.`;
+      $('#bEscanear').hidden = true; $('#oEscribe').hidden = true;
+      $('#bCamara').textContent = '▶ Empezar a transmitir';
+      $('#bCamara').style.padding = '18px'; $('#bCamara').style.fontSize = '19px';
+    } else {
+      $('#celError').textContent = 'Este código ya no es válido. Escanea de nuevo el QR que muestra la laptop.';
+    }
   }catch(e){ $('#celError').textContent = 'Sin conexión. Revisa el internet del celular.'; }
+}
+
+/* ---------- Escáner de QR dentro de la app ---------- */
+let escStream = null, escTimer = null, detectorQR = null, leyendoQR = false;
+const lienzoEsc = document.createElement('canvas');
+function cargarScript(src){ return new Promise((ok, mal) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = mal; document.head.appendChild(s); }); }
+async function abrirEscaner(){
+  $('#celError').textContent = '';
+  try{ escStream = await navigator.mediaDevices.getUserMedia({video: {facingMode: 'environment'}, audio: false}); }
+  catch(e){ $('#celError').textContent = 'No pude abrir la cámara para escanear. Da el permiso de cámara o escribe el código.'; return; }
+  $('#escaner').hidden = false;
+  const v = $('#vidEsc'); v.srcObject = escStream; try{ await v.play(); }catch(e){}
+  // Android/Chrome traen lector propio; en iPhone se usa una librería
+  if (!detectorQR && 'BarcodeDetector' in window){
+    try{ const f = await BarcodeDetector.getSupportedFormats(); if (f.includes('qr_code')) detectorQR = new BarcodeDetector({formats: ['qr_code']}); }catch(e){}
+  }
+  if (!detectorQR && !window.jsQR){ try{ await cargarScript('https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js'); }catch(e){} }
+  if (!detectorQR && !window.jsQR){ cerrarEscaner(); $('#celError').textContent = 'Este navegador no puede escanear. Escribe el código.'; return; }
+  clearInterval(escTimer); escTimer = setInterval(leerQR, 250);
+}
+async function leerQR(){
+  if (leyendoQR || !escStream) return;
+  leyendoQR = true;
+  try{
+    const v = $('#vidEsc'); if (!v.videoWidth) return;
+    let texto = null;
+    if (detectorQR){
+      const r = await detectorQR.detect(v); if (r.length) texto = r[0].rawValue;
+    } else {
+      const w = Math.min(640, v.videoWidth), h = Math.round(v.videoHeight * w / v.videoWidth);
+      lienzoEsc.width = w; lienzoEsc.height = h;
+      const c = lienzoEsc.getContext('2d', {willReadFrequently: true});
+      c.drawImage(v, 0, 0, w, h);
+      const r = window.jsQR(c.getImageData(0, 0, w, h).data, w, h, {inversionAttempts: 'dontInvert'});
+      if (r) texto = r.data;
+    }
+    const cod = texto ? codigoDeQR(texto) : null;
+    if (cod){
+      cerrarEscaner();
+      if (navigator.vibrate) navigator.vibrate(80);
+      $('#codIn').value = verCodigo(cod);
+      await validarCodigoCel(cod);
+    }
+  }catch(e){}
+  finally{ leyendoQR = false; }
+}
+function codigoDeQR(t){
+  try{ const s = new URL(t).searchParams.get('sala'); if (s) return normalizarCodigo(s); }catch(e){}
+  const c = normalizarCodigo(t);
+  return c.length === 8 ? c : null;
+}
+function cerrarEscaner(){
+  clearInterval(escTimer); escTimer = null;
+  if (escStream) escStream.getTracks().forEach(t => t.stop());
+  escStream = null; $('#vidEsc').srcObject = null;
+  $('#escaner').hidden = true;
 }
 async function iniciarCamara(){
   salaCod = normalizarCodigo($('#codIn').value);
@@ -1271,7 +1351,11 @@ if (esIOS && !yaInstalada) {
 }
 
 /* ---------- Arranque ---------- */
-$('#codIn').addEventListener('input', e => { const c = normalizarCodigo(e.target.value); e.target.value = c.length > 4 ? c.slice(0,4) + '-' + c.slice(4) : c; });
+$('#codIn').addEventListener('input', e => {
+  const c = normalizarCodigo(e.target.value);
+  e.target.value = c.length > 4 ? c.slice(0,4) + '-' + c.slice(4) : c;
+  if (c.length === 8) validarCodigoCel(c);   // al completar el código, muestra de qué organización es
+});
 $('#logPass').addEventListener('keydown', e => { if (e.key === 'Enter') ingresar(); });
 if (new URLSearchParams(location.search).get('sala')) prepararCelular();
 else cargarContexto();
