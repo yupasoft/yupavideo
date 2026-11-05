@@ -1,0 +1,19 @@
+name: Mantener Supabase activo
+
+# Llama a Supabase cada 3 días para que el plan gratuito no se pause por inactividad.
+# También se puede ejecutar a mano: pestaña Actions → "Mantener Supabase activo" → Run workflow.
+on:
+  schedule:
+    - cron: '17 14 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Llamar a Supabase
+        run: |
+          curl -fsS -X POST "https://ylwqztypjilecjwywawd.supabase.co/rest/v1/rpc/yv_ping" \
+            -H "apikey: sb_publishable_oHr1AqDbKi_lileKrmkhMg_4T6zYJ7E" \
+            -H "Content-Type: application/json" \
+            -d '{}'
