@@ -1,0 +1,1222 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Yupavideo</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0C1A2E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Yupavideo">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --tinta:#0C1A2E;--turq:#2ED3B7;--ambar:#F2A93B;--gris:#9BB0C9;--claro:#F4F7FA;
+  --bg:#0C1A2E;--panel:#12243C;--panel2:#183050;--borde:#24405F;--txt:#F4F7FA;--sub:#9BB0C9;--rojo:#EF5350;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:'Sora',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.centro{max-width:520px;margin:0 auto;padding:28px 16px 40px;display:flex;flex-direction:column;gap:16px}
+h1{font-size:26px;margin:0;font-weight:700;letter-spacing:-.3px}
+h2{font-size:17px;margin:0;font-weight:600}
+p{color:var(--sub);margin:0;line-height:1.5}
+a{color:var(--turq)}
+.marca{display:flex;align-items:center;gap:12px}
+.marca small{display:block;color:var(--sub);font-size:12px;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px}
+.tarjeta{background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px}
+button,select{font:inherit;font-weight:600;border:0;border-radius:10px;padding:12px 16px;cursor:pointer;background:var(--turq);color:var(--tinta)}
+select{background:#0A1626;border:1px solid var(--borde);color:var(--txt);font-weight:400}
+button.sec{background:var(--panel2);color:var(--txt);border:1px solid var(--borde)}
+button.rojo{background:var(--rojo);color:#fff}
+button.ambar{background:var(--ambar);color:var(--tinta)}
+button:disabled{opacity:.45;cursor:not-allowed}
+input{font:inherit;padding:12px;border-radius:10px;border:1px solid var(--borde);background:#0A1626;color:var(--txt);width:100%}
+input.codigoIn{font-family:'IBM Plex Mono',monospace;font-size:22px;letter-spacing:3px;text-transform:uppercase;text-align:center}
+label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px}
+.estado{font-size:13px;color:var(--sub);font-family:'IBM Plex Mono',monospace}
+.punto{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--sub);margin-right:6px;vertical-align:middle}
+.punto.vivo{background:var(--turq)}.punto.malo{background:var(--ambar)}.punto.rec{background:var(--rojo);animation:lat 1s infinite}.punto.pausa{background:var(--ambar)}
+@keyframes lat{50%{opacity:.3}}
+.error{color:#FFB4A9;font-size:14px}
+.ok{color:var(--turq);font-size:14px}
+.fila{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pie{text-align:center;font-size:12px;color:var(--sub);font-family:'IBM Plex Mono',monospace}
+.chip{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:3px 8px;border-radius:6px;background:var(--panel2);color:var(--sub)}
+.chip.ok{color:var(--tinta);background:var(--turq)}.chip.mal{color:var(--tinta);background:var(--ambar)}
+/* Laptop */
+#monitor{display:flex;flex-direction:column;height:100vh}
+#monitor .cab{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
+#monitor .cab .der{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#monitor .cab button{padding:8px 12px}
+#monitor .zona{flex:1;position:relative;background:#000;display:flex;align-items:center;justify-content:center;min-height:0}
+#vidPC{width:100%;height:100%;object-fit:contain;background:#000}
+#esperaPC{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);overflow:auto}
+#qr{background:#fff;padding:10px;border-radius:10px;width:fit-content;margin:0 auto}
+.codigo{font-family:'IBM Plex Mono',monospace;font-size:38px;font-weight:600;letter-spacing:6px;text-align:center;color:var(--turq)}
+.enlace{font-size:12px;color:var(--sub);word-break:break-all;text-align:center;font-family:'IBM Plex Mono',monospace}
+#barraPC{display:flex;gap:8px;flex-wrap:wrap;padding:10px 16px;border-top:1px solid var(--borde);justify-content:center;align-items:center}
+#barraPC button{padding:10px 14px}
+.tag{position:absolute;background:rgba(12,26,46,.8);padding:6px 10px;border-radius:8px;font-size:12px;font-weight:600;font-family:'IBM Plex Mono',monospace}
+#recCel{top:12px;left:12px}#recPCtag{top:12px;right:12px}#calidad{bottom:12px;left:12px;font-weight:500}
+#cortePC{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#0C1A2Ecc;font-size:20px;font-weight:700;text-align:center;padding:20px;z-index:3}
+#placaPausa{position:absolute;inset:0;display:flex;flex-direction:column;gap:18px;align-items:center;justify-content:center;background:var(--tinta);z-index:2;text-align:center;padding:20px}
+#placaPausa[hidden]{display:none}
+#placaPausa img{max-width:min(420px,60%);max-height:35%;object-fit:contain}
+#placaPausa .t1{font-size:28px;font-weight:700}
+#placaPausa .t2{color:var(--sub);font-family:'IBM Plex Mono',monospace}
+/* Panel de logo */
+#panelLogo{position:absolute;top:0;right:0;bottom:0;width:min(340px,100%);background:var(--panel);border-left:1px solid var(--borde);padding:14px;overflow:auto;display:flex;flex-direction:column;gap:14px;z-index:5}
+#panelLogo[hidden]{display:none}
+.pl-cab{display:flex;justify-content:space-between;align-items:center}
+.pl-cab button{padding:8px 14px}
+.pl-nota{font-size:13px}
+.pl-lista{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pl-item{position:relative;border:2px solid var(--borde);border-radius:10px;background:#2A3B52;height:84px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:8px;color:var(--sub);font-size:14px;font-weight:600}
+.pl-item img{max-width:100%;max-height:100%;object-fit:contain}
+.pl-item.activo{border-color:var(--turq);box-shadow:0 0 0 2px var(--turq) inset}
+.pl-item .borrar{position:absolute;top:4px;right:4px;width:24px;height:24px;padding:0;border-radius:50%;background:#000a;color:#fff;font-size:12px}
+.pl-agregar{border:1px dashed var(--borde);border-radius:10px;padding:12px;text-align:center;cursor:pointer;color:var(--txt)}
+.pl-agregar input{display:none}
+.pl-grupo{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px}
+.pl-pos{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:140px}
+.pl-pos button{background:var(--panel2);color:var(--txt);padding:8px;font-size:18px}
+.pl-pos button.activo{background:var(--turq);color:var(--tinta)}
+.pl-check{flex-direction:row;align-items:center;gap:8px;color:var(--txt)}
+input[type=range]{width:100%;padding:0;accent-color:var(--turq)}
+input[type=checkbox]{width:auto;accent-color:var(--turq)}
+/* Celular */
+#camara{position:fixed;inset:0;background:#000}
+#vidCel{position:absolute;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none}
+#lienzo{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+#camara .arriba{position:absolute;top:0;left:0;right:0;padding:calc(env(safe-area-inset-top) + 10px) 14px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px;background:linear-gradient(#0C1A2Ecc,#0000)}
+#camara .arriba .der{display:flex;align-items:center;gap:8px}
+#camara .abajo{position:absolute;bottom:0;left:0;right:0;padding:16px 10px calc(env(safe-area-inset-bottom) + 20px);display:flex;justify-content:space-around;align-items:center;background:linear-gradient(#0000,#0C1A2Ecc)}
+.btnRec{width:72px;height:72px;border-radius:50%;border:5px solid #fff;background:var(--rojo);padding:0;flex:none}
+.btnRec.grabando{border-radius:18px;width:56px;height:56px;margin:8px}
+.btnRed{width:50px;height:50px;border-radius:50%;padding:0;background:#ffffff33;font-size:22px;flex:none;color:#fff}
+.btnRed.activo{background:var(--ambar);color:var(--tinta)}
+.btnMini{height:38px;padding:0 12px;border-radius:19px;background:#ffffff33;font-size:15px;color:#fff}
+#tiempo{font-variant-numeric:tabular-nums;font-weight:600;color:#fff;font-family:'IBM Plex Mono',monospace}
+#aviso{position:absolute;left:14px;right:14px;top:50%;transform:translateY(-50%);background:#0C1A2Ee6;padding:16px;border-radius:12px;text-align:center;display:none;line-height:1.5}
+#bandaPausa{position:absolute;left:0;right:0;top:calc(env(safe-area-inset-top) + 60px);text-align:center}
+#bandaPausa span{background:var(--ambar);color:var(--tinta);font-weight:700;padding:8px 14px;border-radius:20px}
+#bandaPausa[hidden]{display:none}
+.nota{font-size:13px;color:#fffc;text-align:center;position:absolute;bottom:calc(env(safe-area-inset-bottom) + 110px);left:10px;right:10px}
+.nota.alerta{color:var(--tinta);font-weight:700;background:var(--ambar);padding:8px;border-radius:8px}
+#dlgCel{position:absolute;inset:0;background:#0009;display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}
+#dlgCel[hidden]{display:none}
+#dlgCel .caja{background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:20px;max-width:360px;width:100%;display:flex;flex-direction:column;gap:16px}
+#dlgCel p{color:var(--txt);font-size:16px}
+#dlgCel .bts{display:flex;gap:10px;justify-content:flex-end}
+</style>
+</head>
+<body>
+
+<!-- ============ INICIO ============ -->
+<section id="inicio" class="pantalla">
+  <div class="centro">
+    <div class="marca">
+      <span id="isoGrande"></span>
+      <div><h1>Yupavideo</h1><small>por Yupasoft</small></div>
+    </div>
+
+    <!-- Laptop: sesión -->
+    <div class="tarjeta" id="tarjetaLogin">
+      <h2>💻 Laptop · Iniciar sesión</h2>
+      <p>Ingresa con el usuario de tu organización. Ábrelo en Google Chrome o Microsoft Edge.</p>
+      <label>Correo <input id="logEmail" type="email" autocomplete="username"></label>
+      <label>Contraseña <input id="logPass" type="password" autocomplete="current-password"></label>
+      <button id="bLogin" onclick="ingresar()">Ingresar</button>
+      <div class="error" id="logError"></div>
+    </div>
+
+    <div class="tarjeta" id="tarjetaSesion" hidden>
+      <h2>💻 Laptop</h2>
+      <div id="infoSesion"></div>
+      <button id="bAbrirPantalla" onclick="iniciarMonitor()">Abrir pantalla de transmisión</button>
+      <div class="fila">
+        <button class="sec" onclick="cerrarSesion()">Cerrar sesión</button>
+        <a id="linkAdmin" href="admin.html" hidden>Panel de administración →</a>
+      </div>
+    </div>
+
+    <!-- Celular -->
+    <div class="tarjeta" id="tarjetaCel">
+      <h2>📱 Celular</h2>
+      <p id="textoCel">Escanea el QR que aparece en la laptop, o escribe su código.</p>
+      <input id="codIn" class="codigoIn" maxlength="9" placeholder="XXXX-XXXX" autocomplete="off">
+      <label>Calidad de transmisión
+        <select id="calSel">
+          <option value="720" selected>Estable · 720p (recomendada para eventos largos)</option>
+          <option value="1080">Alta · 1080p (necesita muy buena señal)</option>
+        </select>
+      </label>
+      <button id="bCamara" onclick="iniciarCamara()">Usar como cámara</button>
+      <div class="error" id="celError"></div>
+    </div>
+
+    <div class="tarjeta" id="tarjetaInstalar" hidden>
+      <h2>⬇ Instalar la app</h2>
+      <p id="textoInstalar">Instálala para abrirla desde un ícono, como cualquier aplicación.</p>
+      <button id="bInstalar" onclick="instalar()" hidden>Instalar</button>
+    </div>
+
+    <div class="pie">Yupavideo · <a href="https://yupasoft.github.io" target="_blank" rel="noopener">Yupasoft</a> · software a medida</div>
+  </div>
+</section>
+
+<!-- ============ LAPTOP ============ -->
+<section id="monitor" class="pantalla" hidden>
+  <div class="cab">
+    <div class="marca"><span id="isoChico"></span><strong id="nombreEmpresa">Yupavideo</strong></div>
+    <div class="der">
+      <span class="estado" id="estPC"><span class="punto"></span>Preparando…</span>
+      <button class="sec" id="bLogo" onclick="abrirPanelLogo()">🏷 Logo: ninguno</button>
+      <button class="sec" onclick="history.back()">✕ Salir</button>
+    </div>
+  </div>
+  <div class="zona">
+    <video id="vidPC" autoplay playsinline muted></video>
+    <div id="placaPausa" hidden>
+      <img id="placaLogo" alt="" hidden>
+      <div class="t1">Transmisión en pausa</div>
+      <div class="t2">Volvemos en un momento</div>
+    </div>
+    <div class="tag" id="recCel" hidden></div>
+    <div class="tag" id="recPCtag" hidden></div>
+    <div class="tag" id="calidad" hidden></div>
+    <div id="cortePC">Señal cortada · reconectando sola…<br>La grabación continúa en cuanto vuelva la imagen.</div>
+    <div id="esperaPC">
+      <div class="centro" style="text-align:center">
+        <p>Escanea con el celular:</p>
+        <div id="qr"></div>
+        <p>o escribe este código en el celular:</p>
+        <div class="codigo" id="cod">····-····</div>
+        <div class="enlace" id="enlace"></div>
+        <button class="sec" onclick="if(confirm('¿Crear un código nuevo? El celular tendrá que escanear otra vez.')) abrirSala(true)">Código nuevo</button>
+      </div>
+    </div>
+    <!-- Panel de logo -->
+    <div id="panelLogo" hidden>
+      <div class="pl-cab"><strong>Logo en la transmisión</strong><button class="sec" onclick="cerrarPanelLogo()">Listo</button></div>
+      <p class="pl-nota">Sale en la imagen de esta laptop y en su grabación. Los logos se guardan en la cuenta de tu organización.</p>
+      <div id="listaLogos" class="pl-lista"></div>
+      <label class="pl-agregar">+ Agregar logo (PNG con fondo transparente es lo mejor)
+        <input type="file" accept="image/*" onchange="agregarLogo(this)">
+      </label>
+      <div class="pl-grupo"><span>Posición</span>
+        <div class="pl-pos">
+          <button data-pos="si" onclick="ponerCfg('pos','si')">↖</button>
+          <button data-pos="sd" onclick="ponerCfg('pos','sd')">↗</button>
+          <button data-pos="ii" onclick="ponerCfg('pos','ii')">↙</button>
+          <button data-pos="id" onclick="ponerCfg('pos','id')">↘</button>
+        </div>
+      </div>
+      <label class="pl-grupo">Tamaño <span id="vTam" class="mono"></span>
+        <input type="range" id="rTam" min="10" max="70" oninput="ponerCfg('tam',+this.value)">
+      </label>
+      <label class="pl-grupo">Opacidad <span id="vOpac" class="mono"></span>
+        <input type="range" id="rOpac" min="20" max="100" oninput="ponerCfg('opac',+this.value)">
+      </label>
+      <label class="pl-check"><input type="checkbox" id="cSombra" onchange="ponerCfg('sombra',this.checked)"> Sombra suave (se lee mejor en fondos claros)</label>
+      <p class="pl-nota" id="sinSoporte" hidden>Este navegador no puede poner el logo en el video. Usa Google Chrome o Microsoft Edge.</p>
+    </div>
+  </div>
+  <div id="barraPC" hidden>
+    <button id="bPausaTx" class="ambar" onclick="pausaTxDesdePC()">⏸ Pausar transmisión</button>
+    <button id="bCarpeta" class="sec" onclick="elegirCarpeta()">📁 Elegir carpeta</button>
+    <button id="bRecPC" class="rojo" onclick="alternarRecPC()">● Grabar en la laptop</button>
+    <button id="bPausaPC" class="sec" onclick="pausarPC()" hidden>⏸ Pausar grabación</button>
+    <button id="bRecRemoto" class="sec" onclick="recRemoto()">Copia de respaldo en el celular</button>
+    <button id="bSonido" class="sec" onclick="sonido()">🔇 Activar sonido</button>
+    <button class="sec" onclick="document.querySelector('#monitor .zona').requestFullscreen?.()">⛶</button>
+  </div>
+</section>
+
+<!-- ============ CELULAR ============ -->
+<section id="camara" class="pantalla" hidden>
+  <video id="vidCel" autoplay playsinline muted></video>
+  <canvas id="lienzo"></canvas>
+  <div class="arriba">
+    <span class="estado" id="estCel" style="color:#fff"><span class="punto"></span>Conectando…</span>
+    <div class="der">
+      <span id="tiempo"></span>
+      <button class="btnMini" onclick="voltear()" title="Si la imagen sale de cabeza">⇅</button>
+      <button class="btnMini" onclick="history.back()">✕ Salir</button>
+    </div>
+  </div>
+  <div id="bandaPausa" hidden><span>⏸ Transmisión en pausa</span></div>
+  <div id="aviso"></div>
+  <div class="nota" id="nota">No cierres esta pantalla ni cambies de app: la cámara se apaga.</div>
+  <div id="dlgCel" hidden>
+    <div class="caja">
+      <p id="dlgTxt"></p>
+      <div class="bts">
+        <button class="sec" id="dlgNo" onclick="responderDlg(false)">Cancelar</button>
+        <button class="rojo" id="dlgSi" onclick="responderDlg(true)">Sí</button>
+      </div>
+    </div>
+  </div>
+  <div class="abajo">
+    <button class="btnRed" onclick="reconectarManual()" title="Reconectar">↻</button>
+    <button class="btnRed" id="bOrient" onclick="cambiarOrient()" title="Horizontal / Vertical"></button>
+    <button class="btnRec" id="bRec" onclick="alternarRec()" aria-label="Copia de respaldo en el celular"></button>
+    <button class="btnRed" id="bPausa" onclick="alternarPausaTx()" title="Pausar transmisión">⏸</button>
+    <button class="btnRed" id="bGirar" onclick="girar()" title="Cambiar cámara">⟲</button>
+  </div>
+</section>
+
+<script>
+/* =====================================================================
+   YUPAVIDEO · Yupasoft
+   ===================================================================== */
+const SB_URL = 'https://ylwqztypjilecjwywawd.supabase.co';
+const SB_KEY = 'sb_publishable_oHr1AqDbKi_lileKrmkhMg_4T6zYJ7E';
+const ICE = [
+  {urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302']},
+  {urls: 'stun:stun.cloudflare.com:3478'}
+  // Aquí irá el servidor de respaldo (TURN) en la siguiente fase
+];
+const SEG_CARPETA_MIN = 15;   // laptop con carpeta: un archivo cada 15 min grabados
+const SEG_DESCARGA_MIN = 10;  // laptop sin carpeta: descarga cada 10 min grabados
+const SEG_CEL_MIN = 5;        // copia del celular: descarga cada 5 min grabados
+
+const $ = s => document.querySelector(s);
+let wake = null;
+
+/* ---------- Isotipo Yupasoft (cuadrícula 4×4, fichas en escalera) ---------- */
+function isotipo(px){
+  let r = '';
+  for (let c = 0; c < 4; c++) for (let f = 0; f < 4; f++){
+    const x = 1 + c*10, y = 1 + f*10, llena = f >= 3 - c, ambar = (c === 3 && f === 0);
+    r += llena
+      ? `<rect x="${x}" y="${y}" width="8" height="8" rx="2" fill="${ambar ? '#F2A93B' : '#2ED3B7'}"/>`
+      : `<rect x="${x+.6}" y="${y+.6}" width="6.8" height="6.8" rx="1.6" fill="none" stroke="#9BB0C9" stroke-opacity=".35" stroke-width="1.2"/>`;
+  }
+  return `<svg width="${px}" height="${px}" viewBox="0 0 40 40" aria-hidden="true">${r}</svg>`;
+}
+$('#isoGrande').innerHTML = isotipo(44);
+$('#isoChico').innerHTML = isotipo(26);
+
+/* ---------- Utilidades ---------- */
+function mostrar(id){ document.querySelectorAll('.pantalla').forEach(p => p.hidden = p.id !== id); }
+function visible(id){ return !$('#'+id).hidden; }
+function leerLS(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function grabarLS(k,v){ try{ v === null ? localStorage.removeItem(k) : localStorage.setItem(k,v); }catch(e){} }
+function normalizarCodigo(t){ return (t||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8); }
+function verCodigo(c){ return c.length === 8 ? c.slice(0,4) + '-' + c.slice(4) : c; }
+function tipoVideo(){
+  for (const t of ['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm','video/mp4'])
+    if (window.MediaRecorder && MediaRecorder.isTypeSupported(t)) return t;
+  return '';
+}
+function tipoVideoCel(){
+  for (const t of ['video/mp4','video/webm;codecs=vp8,opus','video/webm'])
+    if (window.MediaRecorder && MediaRecorder.isTypeSupported(t)) return t;
+  return '';
+}
+function extDe(m){ return (m||'').includes('mp4') ? 'mp4' : 'webm'; }
+function nombreArchivo(origen, n, ext){
+  const d = new Date(), p = x => String(x).padStart(2,'0');
+  return `evento_${origen}_${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}-${p(d.getMinutes())}-${p(d.getSeconds())}_parte${String(n).padStart(2,'0')}.${ext}`;
+}
+function descargar(trozos, mime, nombre){
+  if (!trozos.length) return;
+  const blob = new Blob(trozos, {type: mime || 'video/webm'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = nombre;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 120000);
+}
+function reloj(seg){ const h=Math.floor(seg/3600), m=Math.floor(seg%3600/60), s=seg%60, p=x=>String(x).padStart(2,'0'); return (h?h+':':'')+p(m)+':'+p(s); }
+function fechaBonita(iso){ if (!iso) return ''; const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`; }
+async function pantallaEncendida(){ try{ wake = await navigator.wakeLock?.request('screen'); }catch(e){} }
+function soltarPantalla(){ try{ wake && wake.release(); }catch(e){} wake = null; }
+function esperar(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+/* ---------- Conexión con Supabase (publishable key solo en "apikey") ---------- */
+let ses = null;
+try{ ses = JSON.parse(leerLS('yv_sesion') || 'null'); }catch(e){ ses = null; }
+function guardarSesion(s){ ses = s; grabarLS('yv_sesion', s ? JSON.stringify(s) : null); }
+async function sb(path, opts = {}, conSesion = true){
+  const h = Object.assign({'apikey': SB_KEY, 'Content-Type': 'application/json'}, opts.headers || {});
+  if (conSesion && ses){ await asegurarToken(); if (ses) h['Authorization'] = 'Bearer ' + ses.access_token; }
+  const r = await fetch(SB_URL + path, Object.assign({}, opts, {headers: h}));
+  const txt = await r.text();
+  let data = null; try{ data = txt ? JSON.parse(txt) : null; }catch(e){ data = txt; }
+  if (!r.ok){
+    const msg = (data && (data.message || data.msg || data.error_description || data.error)) || ('Error ' + r.status);
+    const err = new Error(msg); err.status = r.status; throw err;
+  }
+  return data;
+}
+function rpc(fn, args, conSesion = true){ return sb('/rest/v1/rpc/' + fn, {method:'POST', body: JSON.stringify(args || {})}, conSesion); }
+let refrescando = null;
+async function asegurarToken(){
+  if (!ses || ses.expires_at - Date.now()/1000 > 90) return;
+  if (!refrescando) refrescando = (async () => {
+    try{
+      const d = await sb('/auth/v1/token?grant_type=refresh_token', {method:'POST', body: JSON.stringify({refresh_token: ses.refresh_token})}, false);
+      guardarSesion({access_token: d.access_token, refresh_token: d.refresh_token, expires_at: Date.now()/1000 + d.expires_in});
+    }catch(e){
+      if (e.status && e.status >= 400 && e.status < 500) guardarSesion(null);
+    }finally{ refrescando = null; }
+  })();
+  await refrescando;
+}
+async function ingresar(){
+  const email = $('#logEmail').value.trim(), pass = $('#logPass').value;
+  $('#logError').textContent = '';
+  if (!email || !pass){ $('#logError').textContent = 'Escribe tu correo y contraseña.'; return; }
+  $('#bLogin').disabled = true; $('#bLogin').textContent = 'Ingresando…';
+  try{
+    const d = await sb('/auth/v1/token?grant_type=password', {method:'POST', body: JSON.stringify({email, password: pass})}, false);
+    guardarSesion({access_token: d.access_token, refresh_token: d.refresh_token, expires_at: Date.now()/1000 + d.expires_in});
+    $('#logPass').value = '';
+    await cargarContexto();
+  }catch(e){
+    $('#logError').textContent = /invalid/i.test(e.message) ? 'Correo o contraseña incorrectos.' : 'No se pudo ingresar: ' + e.message;
+  }finally{ $('#bLogin').disabled = false; $('#bLogin').textContent = 'Ingresar'; }
+}
+async function cerrarSesion(){
+  try{ if (ses) await sb('/auth/v1/logout', {method:'POST'}); }catch(e){}
+  guardarSesion(null); ctx = null; pintarInicio();
+}
+
+/* ---------- Pantalla de inicio ---------- */
+let ctx = null;
+async function cargarContexto(){
+  if (!ses){ ctx = null; pintarInicio(); return; }
+  try{ ctx = await rpc('yv_mi_contexto'); }
+  catch(e){ if (!ses) ctx = null; else { $('#logError').textContent = 'Sin conexión con el servidor. Revisa internet.'; } }
+  pintarInicio();
+}
+function pintarInicio(){
+  const conSesion = !!(ses && ctx);
+  $('#tarjetaLogin').hidden = conSesion;
+  $('#tarjetaSesion').hidden = !conSesion;
+  if (!conSesion) return;
+  const tieneEmpresa = !!ctx.empresa_id;
+  let html = `<p><b style="color:var(--txt)">${ctx.empresa ? escapar(ctx.empresa) : 'Sin organización asignada'}</b><br><span class="mono" style="font-size:13px">${escapar(ctx.email || '')}</span></p>`;
+  if (tieneEmpresa){
+    html += ctx.vigente
+      ? `<p><span class="chip ok">Licencia vigente</span> <span class="mono" style="font-size:13px">hasta el ${fechaBonita(ctx.vence_el)}</span></p>`
+      : `<p><span class="chip mal">Licencia ${ctx.activa ? 'vencida' : 'inactiva'}</span> <span class="mono" style="font-size:13px">${ctx.activa ? 'venció el ' + fechaBonita(ctx.vence_el) : ''}</span></p><p>Para renovarla, escribe a Yupasoft.</p>`;
+  } else {
+    html += `<p>Tu usuario aún no está asignado a una organización. Escribe a Yupasoft.</p>`;
+  }
+  $('#infoSesion').innerHTML = html;
+  $('#bAbrirPantalla').hidden = !(tieneEmpresa && ctx.vigente);
+  $('#linkAdmin').hidden = !ctx.es_super;
+}
+function escapar(t){ return String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* Botón "atrás": sale de la cámara/pantalla, no de la página */
+function entrar(id){ mostrar(id); history.pushState({pantalla:id}, ''); }
+window.addEventListener('popstate', () => {
+  if (visible('camara')) {
+    if (!grabandoCel) { salirCamara(); return; }
+    history.pushState({pantalla:'camara'}, '');
+    preguntar('Hay una copia grabándose en el celular. Si sales, se termina y se guarda.', 'Salir').then(ok => {
+      if (ok) { salirCamara(); history.back(); }
+    });
+  } else if (visible('monitor')) {
+    if (!salirMonitor()) history.pushState({pantalla:'monitor'}, '');
+  }
+});
+
+/* ---------- Señalización: espera a reunir las rutas de red y manda la descripción completa ---------- */
+function esperarIce(p){
+  return new Promise(res => {
+    if (p.iceGatheringState === 'complete') return res();
+    const t = setTimeout(res, 4000);
+    p.addEventListener('icegatheringstatechange', () => { if (p.iceGatheringState === 'complete'){ clearTimeout(t); res(); } });
+  });
+}
+
+/* =====================================================================
+   LAPTOP
+   ===================================================================== */
+let salaPC = '', desdePC = 0, cicloPCTimer = null, ocupadoPC = false;
+let pcPC = null, dcPC = null, debounceStream = null;
+let carpeta = null, grabandoPC = false, pausadoPC = false, grabAutoPausada = false, segPC = null, nSegPC = 0, totalPC = 0, relojPC = null;
+let statsTimer = null, ultBytes = 0, ultT = 0, recRemotoOn = false, orientCel = '', pausaTxCel = false;
+
+function estadoPC(txt, clase=''){ $('#estPC').innerHTML = `<span class="punto ${clase}"></span>${txt}`; }
+
+async function iniciarMonitor(){
+  if (!ctx || !ctx.vigente) return;
+  entrar('monitor');
+  $('#nombreEmpresa').textContent = ctx.empresa || 'Yupavideo';
+  if (!window.showDirectoryPicker) $('#bCarpeta').hidden = true;
+  pantallaEncendida();
+  cargarLogos();
+  await abrirSala(false);
+}
+async function abrirSala(nuevo){
+  estadoPC('Abriendo sala…', 'malo');
+  try{
+    const r = await rpc('yv_abrir_sala', {p_codigo: nuevo ? null : (leerLS('yv_sala') || null)});
+    salaPC = r.codigo; grabarLS('yv_sala', salaPC);
+  }catch(e){
+    estadoPC('Error', 'malo');
+    alert('No se pudo abrir la sala: ' + e.message);
+    salirMonitor(); history.back(); return;
+  }
+  const url = location.origin + location.pathname + '?sala=' + salaPC;
+  $('#cod').textContent = verCodigo(salaPC);
+  $('#enlace').textContent = url;
+  $('#qr').innerHTML = '';
+  new QRCode($('#qr'), {text:url, width:180, height:180});
+  // ignora mensajes antiguos y avisa al celular que esta laptop está lista
+  desdePC = 0;
+  try{ const f = await rpc('yv_leer', {p_codigo: salaPC, p_para: 'pc', p_desde: 0}, false); (f||[]).forEach(x => desdePC = Math.max(desdePC, x.id)); }catch(e){}
+  try{ await rpc('yv_enviar', {p_codigo: salaPC, p_de: 'pc', p_tipo: 'hola', p_datos: {}}, false); }catch(e){}
+  if (!pcPC) estadoPC('Esperando al celular…');
+  clearInterval(cicloPCTimer);
+  cicloPCTimer = setInterval(cicloPC, 1500);
+}
+async function cicloPC(){
+  if (ocupadoPC || !salaPC || !visible('monitor')) return;
+  ocupadoPC = true;
+  try{
+    const filas = await rpc('yv_leer', {p_codigo: salaPC, p_para: 'pc', p_desde: desdePC}, false);
+    for (const f of filas || []){
+      desdePC = Math.max(desdePC, f.id);
+      if (f.tipo === 'oferta' && f.datos && f.datos.sdp) await atenderOferta(f.datos);
+    }
+    if (!pcPC || pcPC.connectionState !== 'connected'){
+      if (!$('#esperaPC').hidden) estadoPC('Esperando al celular…');
+    }
+  }catch(e){
+    estadoPC(/no válida|vencida/i.test(e.message) ? 'Sala vencida · usa "Código nuevo"' : 'Sin internet · reintentando…', 'malo');
+  }finally{ ocupadoPC = false; }
+}
+async function atenderOferta(d){
+  if (pcPC){ try{ pcPC.close(); }catch(e){} }
+  const p = new RTCPeerConnection({iceServers: ICE});
+  pcPC = p; dcPC = null;
+  p.ontrack = e => {
+    if (pcPC !== p) return;
+    const s = e.streams && e.streams[0] ? e.streams[0] : new MediaStream([e.track]);
+    clearTimeout(debounceStream);
+    debounceStream = setTimeout(() => { if (pcPC === p) recibirStream(s); }, 250);
+  };
+  p.ondatachannel = e => {
+    if (pcPC !== p) return;
+    dcPC = e.channel;
+    dcPC.onmessage = m => { try{ datosDelCelular(JSON.parse(m.data)); }catch(err){} };
+  };
+  p.onconnectionstatechange = () => {
+    if (pcPC !== p) return;
+    const st = p.connectionState;
+    if (st === 'connected'){ $('#cortePC').style.display = 'none'; estadoPC('En vivo', 'vivo'); }
+    if (st === 'disconnected' || st === 'failed') senalCortada();
+  };
+  try{
+    await p.setRemoteDescription({type: 'offer', sdp: d.sdp});
+    await p.setLocalDescription(await p.createAnswer());
+    await esperarIce(p);
+    if (pcPC !== p) return;
+    await rpc('yv_enviar', {p_codigo: salaPC, p_de: 'pc', p_tipo: 'respuesta', p_datos: {sesion: d.sesion, sdp: p.localDescription.sdp}}, false);
+    estadoPC('Conectando…', 'malo');
+  }catch(e){ estadoPC('Error de conexión · reintentando…', 'malo'); }
+}
+function enviarAlCel(obj){ if (dcPC && dcPC.readyState === 'open') { dcPC.send(JSON.stringify(obj)); return true; } return false; }
+
+function datosDelCelular(d){
+  if (!d || typeof d !== 'object') return;
+  if (typeof d.rec === 'boolean'){
+    recRemotoOn = d.rec;
+    $('#recCel').hidden = !d.rec;
+    $('#recCel').innerHTML = d.pausa
+      ? `<span class="punto pausa"></span>Copia en celular en pausa · ${reloj(d.t||0)}`
+      : `<span class="punto rec"></span>Copia en celular · ${reloj(d.t||0)}`;
+    $('#bRecRemoto').textContent = d.rec ? '■ Terminar copia del celular' : 'Copia de respaldo en el celular';
+  }
+  if (typeof d.pausaTx === 'boolean' && d.pausaTx !== pausaTxCel){
+    pausaTxCel = d.pausaTx;
+    aplicarPausaTxPC(pausaTxCel);
+  }
+  // Si el celular cambia de horizontal a vertical, la grabación de la laptop empieza una parte nueva
+  if (d.orient && d.orient !== orientCel){
+    const habia = orientCel; orientCel = d.orient;
+    if (habia && segPC) { cerrarSegPC(); setTimeout(iniciarSegPC, 700); }
+  }
+}
+function pausaTxDesdePC(){
+  if (!enviarAlCel({cmd: 'pausaTx'})) alert('El celular no está conectado.');
+}
+function aplicarPausaTxPC(on){
+  const im = imagenLogo(cfgLogo.id);
+  $('#placaLogo').hidden = !im;
+  if (im) $('#placaLogo').src = im.src;
+  $('#placaPausa').hidden = !on;
+  $('#bPausaTx').textContent = on ? '▶ Reanudar transmisión' : '⏸ Pausar transmisión';
+  if (grabandoPC){
+    if (on && !pausadoPC){ pausarPC(); grabAutoPausada = true; }
+    else if (!on && grabAutoPausada && pausadoPC){ pausarPC(); grabAutoPausada = false; }
+  }
+}
+
+/* ---------- Logo sobre el video ---------- */
+const puedeLogo = 'MediaStreamTrackProcessor' in window && 'MediaStreamTrackGenerator' in window && 'VideoFrame' in window;
+let logosEmpresa = [];
+let cfgLogo = {id:'', pos:'sd', tam:25, opac:100, sombra:true};
+try{ Object.assign(cfgLogo, JSON.parse(leerLS('yv_cfglogo') || '{}')); }catch(e){}
+const imgLogos = {};
+let compositor = null;
+
+async function cargarLogos(){
+  try{
+    logosEmpresa = await sb('/rest/v1/logos?select=id,nombre,imagen&order=creado_el.asc') || [];
+  }catch(e){ logosEmpresa = []; }
+  if (cfgLogo.id && !logosEmpresa.find(l => l.id === cfgLogo.id)) cfgLogo.id = '';
+  pintarPanelLogo();
+}
+function imagenLogo(id){
+  if (!id) return null;
+  if (!imgLogos[id]){
+    const l = logosEmpresa.find(x => x.id === id); if (!l) return null;
+    const im = new Image(); im.src = l.imagen; imgLogos[id] = im;
+  }
+  const im = imgLogos[id];
+  return im.complete && im.naturalWidth ? im : null;
+}
+function dibujarLogo(c, W, H){
+  const im = imagenLogo(cfgLogo.id); if (!im) return;
+  const corto = Math.min(W, H);
+  const lw = corto * cfgLogo.tam / 100 * 1.6;
+  const lh = lw * im.naturalHeight / im.naturalWidth;
+  const m = Math.round(corto * 0.04);
+  const x = cfgLogo.pos[1] === 'i' ? m : W - lw - m;
+  const y = cfgLogo.pos[0] === 's' ? m : H - lh - m;
+  c.save();
+  c.globalAlpha = cfgLogo.opac / 100;
+  if (cfgLogo.sombra){ c.shadowColor = 'rgba(0,0,0,.55)'; c.shadowBlur = Math.max(4, lw * 0.03); }
+  c.drawImage(im, x, y, lw, lh);
+  c.restore();
+}
+/* Cada cuadro que llega del celular pasa por aquí: si hay logo, se pinta encima. */
+function componer(s){
+  if (compositor) { try{ compositor.abort(); }catch(e){} compositor = null; }
+  const vt = s.getVideoTracks()[0];
+  if (!puedeLogo || !vt) return s;
+  const proc = new MediaStreamTrackProcessor({track: vt});
+  const gen = new MediaStreamTrackGenerator({kind: 'video'});
+  let oc = null, octx = null;
+  const ctrl = new AbortController(); compositor = ctrl;
+  const paso = new TransformStream({
+    transform(frame, salidaCuadros){
+      if (!imagenLogo(cfgLogo.id)) { salidaCuadros.enqueue(frame); return; }
+      const W = frame.displayWidth, H = frame.displayHeight;
+      if (!oc || oc.width !== W || oc.height !== H){ oc = new OffscreenCanvas(W, H); octx = oc.getContext('2d'); }
+      octx.drawImage(frame, 0, 0, W, H);
+      dibujarLogo(octx, W, H);
+      const nuevo = new VideoFrame(oc, {timestamp: frame.timestamp, duration: frame.duration || undefined});
+      frame.close();
+      salidaCuadros.enqueue(nuevo);
+    }
+  });
+  proc.readable.pipeThrough(paso, {signal: ctrl.signal}).pipeTo(gen.writable, {signal: ctrl.signal}).catch(() => {});
+  return new MediaStream([gen, ...s.getAudioTracks()]);
+}
+function guardarCfgLogo(){ grabarLS('yv_cfglogo', JSON.stringify(cfgLogo)); }
+function ponerCfg(k, v){ cfgLogo[k] = v; guardarCfgLogo(); pintarPanelLogo(); }
+function elegirLogo(id){ cfgLogo.id = id; imagenLogo(id); guardarCfgLogo(); pintarPanelLogo(); }
+function abrirPanelLogo(){ pintarPanelLogo(); $('#panelLogo').hidden = false; }
+function cerrarPanelLogo(){ $('#panelLogo').hidden = true; }
+function pintarPanelLogo(){
+  const lista = $('#listaLogos'); lista.innerHTML = '';
+  const nada = document.createElement('div');
+  nada.className = 'pl-item' + (cfgLogo.id ? '' : ' activo'); nada.textContent = 'Sin logo';
+  nada.onclick = () => elegirLogo(''); lista.appendChild(nada);
+  logosEmpresa.forEach(l => {
+    const d = document.createElement('div');
+    d.className = 'pl-item' + (cfgLogo.id === l.id ? ' activo' : ''); d.title = l.nombre;
+    const im = document.createElement('img'); im.src = l.imagen; im.alt = l.nombre; d.appendChild(im);
+    d.onclick = () => elegirLogo(l.id);
+    const b = document.createElement('button'); b.className = 'borrar'; b.textContent = '✕'; b.title = 'Quitar este logo';
+    b.onclick = ev => { ev.stopPropagation(); quitarLogo(l.id); };
+    d.appendChild(b);
+    lista.appendChild(d);
+  });
+  document.querySelectorAll('.pl-pos button').forEach(b => b.classList.toggle('activo', b.dataset.pos === cfgLogo.pos));
+  $('#rTam').value = cfgLogo.tam; $('#vTam').textContent = cfgLogo.tam + '%';
+  $('#rOpac').value = cfgLogo.opac; $('#vOpac').textContent = cfgLogo.opac + '%';
+  $('#cSombra').checked = cfgLogo.sombra;
+  $('#sinSoporte').hidden = puedeLogo;
+  const actual = logosEmpresa.find(x => x.id === cfgLogo.id);
+  $('#bLogo').textContent = '🏷 Logo: ' + (actual ? actual.nombre : 'ninguno');
+}
+function agregarLogo(input){
+  const f = input.files && input.files[0]; input.value = '';
+  if (!f) return;
+  const lector = new FileReader();
+  lector.onload = () => {
+    const im = new Image();
+    im.onload = async () => {
+      const esc = Math.min(1, 1000 / Math.max(im.naturalWidth, im.naturalHeight));
+      const cv = document.createElement('canvas');
+      cv.width = Math.round(im.naturalWidth * esc); cv.height = Math.round(im.naturalHeight * esc);
+      cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height);
+      const data = cv.toDataURL('image/png');
+      if (data.length > 1400000){ alert('La imagen es muy pesada. Usa una más pequeña.'); return; }
+      try{
+        const r = await sb('/rest/v1/logos', {method:'POST', headers:{'Prefer':'return=representation'},
+          body: JSON.stringify({empresa_id: ctx.empresa_id, nombre: f.name.replace(/\.[^.]+$/, '').slice(0,60), imagen: data})});
+        logosEmpresa.push(r[0]);
+        elegirLogo(r[0].id);
+      }catch(e){ alert('No se pudo guardar el logo: ' + e.message); }
+    };
+    im.onerror = () => alert('No pude leer esa imagen.');
+    im.src = lector.result;
+  };
+  lector.readAsDataURL(f);
+}
+async function quitarLogo(id){
+  if (!confirm('¿Quitar este logo de la cuenta de tu organización?')) return;
+  try{
+    await sb('/rest/v1/logos?id=eq.' + encodeURIComponent(id), {method:'DELETE'});
+    logosEmpresa = logosEmpresa.filter(x => x.id !== id);
+    delete imgLogos[id];
+    if (cfgLogo.id === id) cfgLogo.id = '';
+    guardarCfgLogo(); pintarPanelLogo();
+  }catch(e){ alert('No se pudo quitar: ' + e.message); }
+}
+
+function recibirStream(s){
+  cerrarSegPC();
+  $('#vidPC').srcObject = componer(s);
+  $('#esperaPC').hidden = true;
+  $('#barraPC').hidden = false;
+  $('#cortePC').style.display = 'none';
+  estadoPC('En vivo', 'vivo');
+  s.getTracks().forEach(t => t.addEventListener('ended', senalCortada));
+  if (grabandoPC) setTimeout(iniciarSegPC, 300);
+  vigilarCalidad();
+}
+function senalCortada(){
+  cerrarSegPC();
+  if (visible('monitor') && (grabandoPC || $('#vidPC').srcObject)) {
+    $('#cortePC').style.display = 'flex';
+    estadoPC('Señal cortada · esperando al celular…', 'malo');
+  }
+}
+async function elegirCarpeta(){
+  try{
+    carpeta = await window.showDirectoryPicker({mode:'readwrite'});
+    $('#bCarpeta').textContent = '📁 ' + carpeta.name;
+    if (grabandoPC && segPC) { cerrarSegPC(); iniciarSegPC(); }
+  }catch(e){}
+}
+function alternarRecPC(){
+  if (grabandoPC){
+    if (!confirm('¿Terminar la grabación de la laptop?')) return;
+    terminarRecPC();
+    return;
+  }
+  if (!carpeta && window.showDirectoryPicker && !confirm('No elegiste carpeta: cada ' + SEG_DESCARGA_MIN + ' minutos grabados se descargará un archivo en Descargas. Con carpeta es más seguro.\n\n¿Grabar igual?')) return;
+  grabandoPC = true; pausadoPC = false; grabAutoPausada = false; nSegPC = 0; totalPC = 0;
+  $('#bRecPC').textContent = '■ Terminar grabación'; $('#bRecPC').className = 'sec';
+  $('#bPausaPC').hidden = false; $('#bPausaPC').textContent = '⏸ Pausar grabación';
+  $('#recPCtag').hidden = false;
+  clearInterval(relojPC); relojPC = setInterval(tickPC, 1000);
+  iniciarSegPC();
+  if (pausaTxCel){ pausarPC(); grabAutoPausada = true; }
+  pintarPC();
+}
+function terminarRecPC(){
+  grabandoPC = false; pausadoPC = false; grabAutoPausada = false;
+  cerrarSegPC();
+  clearInterval(relojPC);
+  $('#recPCtag').hidden = true;
+  $('#bPausaPC').hidden = true;
+  $('#bRecPC').textContent = '● Grabar en la laptop'; $('#bRecPC').className = 'rojo';
+}
+function pausarPC(){
+  if (!grabandoPC) return;
+  pausadoPC = !pausadoPC;
+  if (!pausadoPC) grabAutoPausada = false;
+  if (segPC && segPC.rec){
+    if (pausadoPC && segPC.rec.state === 'recording') segPC.rec.pause();
+    if (!pausadoPC && segPC.rec.state === 'paused') segPC.rec.resume();
+  }
+  if (!pausadoPC && !segPC) iniciarSegPC();
+  $('#bPausaPC').textContent = pausadoPC ? '▶ Reanudar grabación' : '⏸ Pausar grabación';
+  pintarPC();
+}
+function tickPC(){
+  if (!pausadoPC && segPC && segPC.rec && segPC.rec.state === 'recording'){
+    totalPC++; segPC.acum++;
+    if (segPC.acum >= (segPC.writable ? SEG_CARPETA_MIN : SEG_DESCARGA_MIN) * 60) { cerrarSegPC(); iniciarSegPC(); }
+  }
+  pintarPC();
+}
+function pintarPC(){
+  $('#recPCtag').innerHTML = pausadoPC
+    ? `<span class="punto pausa"></span>Grabación en pausa · ${reloj(totalPC)} · parte ${nSegPC}`
+    : `<span class="punto rec"></span>Grabando laptop · ${reloj(totalPC)} · parte ${nSegPC}`;
+}
+async function iniciarSegPC(){
+  const s = $('#vidPC').srcObject;
+  if (!s || !grabandoPC || pausadoPC || segPC) return;
+  nSegPC++;
+  const mt = tipoVideo();
+  const nombre = nombreArchivo('laptop', nSegPC, extDe(mt));
+  const seg = { rec:null, writable:null, trozos:[], nombre, cola:Promise.resolve(), acum:0 };
+  segPC = seg;
+  if (carpeta){
+    try{ const fh = await carpeta.getFileHandle(nombre, {create:true}); seg.writable = await fh.createWritable(); }
+    catch(e){ seg.writable = null; }
+  }
+  if (segPC !== seg) { if (seg.writable) seg.writable.close().catch(()=>{}); return; }
+  try{ seg.rec = new MediaRecorder(s, mt ? {mimeType:mt, videoBitsPerSecond:6000000} : {}); }
+  catch(e){ seg.rec = new MediaRecorder(s); }
+  seg.rec.ondataavailable = e => {
+    if (!e.data.size) return;
+    if (seg.writable) seg.cola = seg.cola.then(() => seg.writable.write(e.data)).catch(() => {});
+    else seg.trozos.push(e.data);
+  };
+  seg.rec.onstop = async () => {
+    if (seg.writable){ await seg.cola; try{ await seg.writable.close(); }catch(e){} }
+    else descargar(seg.trozos, seg.rec.mimeType, seg.nombre);
+  };
+  seg.rec.start(1000);
+  pintarPC();
+}
+function cerrarSegPC(){
+  if (!segPC) return;
+  const seg = segPC; segPC = null;
+  if (seg.rec && seg.rec.state !== 'inactive') seg.rec.stop();
+}
+function recRemoto(){ if (!enviarAlCel({cmd: recRemotoOn ? 'detener' : 'grabar'})) alert('El celular no está conectado.'); }
+function sonido(){
+  const v = $('#vidPC'); v.muted = !v.muted;
+  $('#bSonido').textContent = v.muted ? '🔇 Activar sonido' : '🔊 Silenciar';
+}
+function vigilarCalidad(){
+  clearInterval(statsTimer); ultBytes = 0; ultT = 0;
+  statsTimer = setInterval(async () => {
+    const pc = pcPC; if (!pc) return;
+    try{
+      const st = await pc.getStats();
+      st.forEach(r => {
+        if (r.type === 'inbound-rtp' && r.kind === 'video'){
+          const ahora = r.timestamp, kbps = ultT ? Math.round((r.bytesReceived-ultBytes)*8/(ahora-ultT)) : 0;
+          ultBytes = r.bytesReceived; ultT = ahora;
+          const fps = Math.round(r.framesPerSecond || 0), ancho = r.frameWidth || 0, alto = r.frameHeight || 0;
+          const bueno = fps >= 24 && kbps > 1200;
+          $('#calidad').hidden = false;
+          $('#calidad').innerHTML = pausaTxCel
+            ? `<span class="punto pausa"></span>Transmisión en pausa`
+            : `<span class="punto ${bueno?'vivo':'malo'}"></span>${ancho}×${alto} · ${fps} fps · ${(kbps/1000).toFixed(1)} Mbps ${bueno?'· señal buena':'· señal débil'}`;
+        }
+      });
+    }catch(e){}
+  }, 2000);
+}
+function salirMonitor(){
+  if (grabandoPC && !confirm('La laptop está grabando. Si sales, se termina la grabación y se guarda lo grabado. ¿Salir?')) return false;
+  if (grabandoPC) terminarRecPC();
+  clearInterval(statsTimer); clearInterval(cicloPCTimer);
+  if (compositor) { try{ compositor.abort(); }catch(e){} compositor = null; }
+  cerrarPanelLogo();
+  try{ pcPC && pcPC.close(); }catch(e){}
+  pcPC = null; dcPC = null; orientCel = ''; pausaTxCel = false;
+  $('#vidPC').srcObject = null;
+  $('#esperaPC').hidden = false; $('#barraPC').hidden = true; $('#placaPausa').hidden = true;
+  $('#cortePC').style.display = 'none'; $('#calidad').hidden = true; $('#recCel').hidden = true;
+  soltarPantalla();
+  mostrar('inicio');
+  return true;
+}
+window.addEventListener('beforeunload', e => { if (grabandoPC || grabandoCel) { e.preventDefault(); e.returnValue = ''; } });
+
+/* =====================================================================
+   CELULAR
+   ===================================================================== */
+let stream = null, salida = null, pistaLienzo = null, lienzo = null, ctx2d = null, bucle = 0, ultDibujo = 0;
+let facing = 'environment', salaCod = '', calidad = '720';
+let orient = leerLS('yv_orient') || 'h', volteado = false;
+let pcCel = null, dcCel = null, sesionCel = '', desdeCel = 0, cicloCelTimer = null, ocupadoCel = false;
+let ofertaEnviada = 0, ultimoBien = 0;
+let grab = null, grabandoCel = false, pausadoCel = false, relojCel = null, nSegCel = 0, totalCel = 0, segAcumCel = 0;
+let pausadoTx = false, copiaAutoPausada = false;
+let gx = 0, gy = 0, costado = 0, giroUI = 0;
+const esIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+function estadoCel(txt, clase=''){ $('#estCel').innerHTML = `<span class="punto ${clase}"></span>${txt}`; }
+function aviso(txt){ const a = $('#aviso'); a.textContent = txt; a.style.display = txt ? 'block' : 'none'; }
+let notaActual = '';
+function nota(txt, alerta){
+  const t = txt || 'No cierres esta pantalla ni cambies de app: la cámara se apaga.';
+  if (t === notaActual) return;
+  notaActual = t; $('#nota').textContent = t; $('#nota').className = alerta ? 'nota alerta' : 'nota';
+}
+
+/* Sensor: sabe si el celular está de costado aunque la rotación esté bloqueada */
+window.addEventListener('devicemotion', e => {
+  const a = e.accelerationIncludingGravity; if (!a || a.x == null) return;
+  gx = esIOS ? -a.x : a.x; gy = esIOS ? -a.y : a.y;
+  if (Math.abs(gx) > 7 && Math.abs(gx) > Math.abs(gy) + 2) costado = gx < 0 ? -1 : 1;
+  else if (Math.abs(gy) > 7 && Math.abs(gy) > Math.abs(gx) + 2) costado = 0;
+});
+/* Con la rotación bloqueada, se gira toda la vista para verla derecha */
+function aplicarGiroUI(){
+  const pantallaParada = window.innerHeight > window.innerWidth;
+  const g = (costado && pantallaParada && visible('camara')) ? (costado < 0 ? -90 : 90) : 0;
+  if (g === giroUI) return;
+  giroUI = g;
+  const c = $('#camara');
+  if (!g){ c.style.cssText = ''; return; }
+  c.style.cssText = `inset:auto;top:50%;left:50%;width:${window.innerHeight}px;height:${window.innerWidth}px;transform:translate(-50%,-50%) rotate(${g}deg)`;
+}
+window.addEventListener('resize', () => { giroUI = 99; aplicarGiroUI(); });
+
+function restricciones(conAudio){
+  const largo = calidad === '1080' ? 1920 : 1280, corto = calidad === '1080' ? 1080 : 720;
+  return { video:{facingMode:facing, width:{ideal:largo}, height:{ideal:corto}, frameRate:{ideal:30}},
+           audio: conAudio ? {echoCancellation:false, noiseSuppression:false, autoGainControl:true} : false };
+}
+async function abrirCamara(){
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  stream = await navigator.mediaDevices.getUserMedia(restricciones(true));
+  $('#vidCel').srcObject = stream;
+  try{ await $('#vidCel').play(); }catch(e){}
+  armarSalida();
+}
+function ajustarLienzo(){
+  const corto = calidad === '1080' ? 1080 : 720, largo = calidad === '1080' ? 1920 : 1280;
+  lienzo.width  = orient === 'h' ? largo : corto;
+  lienzo.height = orient === 'h' ? corto : largo;
+  $('#bOrient').textContent = orient === 'h' ? '▭' : '▯';
+  $('#bOrient').title = orient === 'h' ? 'Horizontal (toca para vertical)' : 'Vertical (toca para horizontal)';
+}
+function armarSalida(){
+  if (!lienzo){ lienzo = $('#lienzo'); ctx2d = lienzo.getContext('2d'); }
+  ajustarLienzo();
+  if (!pistaLienzo || pistaLienzo.readyState === 'ended') pistaLienzo = lienzo.captureStream(30).getVideoTracks()[0];
+  salida = new MediaStream([pistaLienzo, ...stream.getAudioTracks()]);
+  aplicarEstadoPistas();
+  cancelAnimationFrame(bucle);
+  bucle = requestAnimationFrame(dibujar);
+}
+function aplicarEstadoPistas(){
+  if (pistaLienzo) pistaLienzo.enabled = !pausadoTx;
+  if (stream) stream.getAudioTracks().forEach(t => t.enabled = !pausadoTx);
+}
+function dibujar(t){
+  bucle = requestAnimationFrame(dibujar);
+  if (t - ultDibujo < 30) return;
+  ultDibujo = t;
+  aplicarGiroUI();
+  const v = $('#vidCel'), W = lienzo.width, H = lienzo.height;
+  ctx2d.fillStyle = '#000'; ctx2d.fillRect(0, 0, W, H);
+  const sw = v.videoWidth, sh = v.videoHeight;
+  if (!sw || !sh) return;
+  let ang = 0;
+  if (costado && sh > sw) ang = costado < 0 ? 90 : -90;
+  if (volteado) ang += 180;
+  const giro90 = Math.abs(ang % 180) === 90;
+  const ew = giro90 ? sh : sw, eh = giro90 ? sw : sh;
+  const esc = Math.max(W / ew, H / eh);
+  ctx2d.save();
+  ctx2d.translate(W/2, H/2);
+  ctx2d.rotate(ang * Math.PI / 180);
+  ctx2d.drawImage(v, -sw*esc/2, -sh*esc/2, sw*esc, sh*esc);
+  ctx2d.restore();
+  const imagenHorizontal = ew > eh;
+  if (orient === 'h' && !imagenHorizontal) nota('Gira el celular de costado para grabar horizontal', true);
+  else if (orient === 'v' && imagenHorizontal) nota('Pon el celular vertical para grabar vertical', true);
+  else nota('');
+}
+
+async function prepararCelular(){
+  // Al abrir desde el QR: muestra para qué organización es la cámara
+  const sala = normalizarCodigo(new URLSearchParams(location.search).get('sala'));
+  if (!sala) return;
+  $('#codIn').value = verCodigo(sala);
+  $('#tarjetaLogin').hidden = true; $('#tarjetaSesion').hidden = true;
+  $('#bCamara').textContent = '▶ Empezar a transmitir';
+  $('#bCamara').style.padding = '20px'; $('#bCamara').style.fontSize = '20px';
+  try{
+    const i = await rpc('yv_info_sala', {p_codigo: sala}, false);
+    if (i.valida) $('#textoCel').innerHTML = `Este celular será la cámara de <b style="color:var(--txt)">${escapar(i.empresa)}</b>. Toca el botón y acepta los permisos de cámara y micrófono.`;
+    else $('#celError').textContent = 'Este código ya no es válido. Escanea de nuevo el QR que muestra la laptop.';
+  }catch(e){ $('#celError').textContent = 'Sin conexión. Revisa el internet del celular.'; }
+}
+async function iniciarCamara(){
+  salaCod = normalizarCodigo($('#codIn').value);
+  calidad = $('#calSel').value;
+  $('#celError').textContent = '';
+  if (salaCod.length !== 8){ $('#celError').textContent = 'Escribe el código de 8 caracteres que aparece en la laptop.'; return; }
+  try{
+    const i = await rpc('yv_info_sala', {p_codigo: salaCod}, false);
+    if (!i.valida){ $('#celError').textContent = 'Código incorrecto o vencido. Revisa el que muestra la laptop.'; return; }
+  }catch(e){ $('#celError').textContent = 'Sin conexión. Revisa el internet del celular.'; return; }
+  if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === 'function') {
+    try{ await DeviceMotionEvent.requestPermission(); }catch(e){}
+  }
+  entrar('camara');
+  try{ await abrirCamara(); }
+  catch(e){ aviso('No pude abrir la cámara. Da permiso de cámara y micrófono al navegador y vuelve a intentar.'); return; }
+  pantallaEncendida();
+  desdeCel = 0;
+  try{ const f = await rpc('yv_leer', {p_codigo: salaCod, p_para: 'cel', p_desde: 0}, false); (f||[]).forEach(x => desdeCel = Math.max(desdeCel, x.id)); }catch(e){}
+  conectar();
+  clearInterval(cicloCelTimer);
+  cicloCelTimer = setInterval(cicloCel, 1500);
+}
+async function conectar(){
+  if (!salida || !salaCod) return;
+  if (pcCel){ try{ pcCel.close(); }catch(e){} }
+  sesionCel = Math.random().toString(36).slice(2, 10);
+  ofertaEnviada = Date.now();
+  estadoCel('Conectando…', 'malo');
+  const p = new RTCPeerConnection({iceServers: ICE});
+  pcCel = p;
+  salida.getTracks().forEach(t => p.addTrack(t, salida));
+  const dc = p.createDataChannel('control', {ordered: true});
+  dcCel = dc;
+  dc.onopen = () => { if (dcCel === dc) enviarEstado(); };
+  dc.onmessage = m => {
+    if (dcCel !== dc) return;
+    let d = null; try{ d = JSON.parse(m.data); }catch(e){ return; }
+    if (d.cmd === 'grabar') empezarCel();
+    if (d.cmd === 'detener') detenerCel();
+    if (d.cmd === 'pausaTx') alternarPausaTx();
+  };
+  p.onconnectionstatechange = () => {
+    if (pcCel !== p) return;
+    if (p.connectionState === 'connected'){ ultimoBien = Date.now(); aviso(''); estadoCel('En vivo en la laptop', 'vivo'); subirCalidad(p); }
+    if (p.connectionState === 'disconnected' || p.connectionState === 'failed') estadoCel('Conexión perdida · reconectando…', 'malo');
+  };
+  try{
+    await p.setLocalDescription(await p.createOffer());
+    await esperarIce(p);
+    if (pcCel !== p) return;
+    await rpc('yv_enviar', {p_codigo: salaCod, p_de: 'cel', p_tipo: 'oferta', p_datos: {sesion: sesionCel, sdp: p.localDescription.sdp}}, false);
+    ofertaEnviada = Date.now();
+  }catch(e){
+    estadoCel(/no válida|vencida/i.test(e.message) ? 'Sala vencida' : 'Sin internet · reintentando…', 'malo');
+    if (/no válida|vencida/i.test(e.message)) aviso('El código de la laptop venció o la licencia no está vigente. Escanea de nuevo el QR.');
+  }
+}
+async function cicloCel(){
+  if (ocupadoCel || !salaCod || !visible('camara') || !salida) return;
+  ocupadoCel = true;
+  try{
+    const vt = stream && stream.getVideoTracks()[0];
+    if (!vt || vt.readyState === 'ended') { await reabrirTodo(); return; }
+    const filas = await rpc('yv_leer', {p_codigo: salaCod, p_para: 'cel', p_desde: desdeCel}, false);
+    let reiniciar = false;
+    for (const f of filas || []){
+      desdeCel = Math.max(desdeCel, f.id);
+      if (f.tipo === 'respuesta' && f.datos && f.datos.sesion === sesionCel && pcCel && pcCel.signalingState === 'have-local-offer'){
+        try{ await pcCel.setRemoteDescription({type: 'answer', sdp: f.datos.sdp}); }catch(e){}
+      }
+      if (f.tipo === 'hola') reiniciar = true;   // la laptop se reinició: se vuelve a ofrecer
+    }
+    const st = pcCel ? pcCel.connectionState : 'none';
+    if (st === 'connected') ultimoBien = Date.now();
+    if (reiniciar || (st !== 'connected' && Date.now() - ofertaEnviada > 15000 && Date.now() - ultimoBien > 8000)) conectar();
+  }catch(e){
+    estadoCel('Sin internet · reintentando…', 'malo');
+  }finally{ ocupadoCel = false; }
+}
+async function subirCalidad(pc){
+  const tope = calidad === '1080' ? 6000000 : 3500000;
+  for (const s of pc.getSenders()){
+    if (s.track && s.track.kind === 'video'){
+      const p = s.getParameters();
+      if (!p.encodings || !p.encodings.length) p.encodings = [{}];
+      p.encodings[0].maxBitrate = tope;
+      p.degradationPreference = 'maintain-framerate';
+      try{ await s.setParameters(p); }catch(e){}
+    }
+  }
+}
+async function reabrirTodo(){
+  const seguiaGrabando = grabandoCel;
+  if (seguiaGrabando) detenerCel();
+  try{ await abrirCamara(); }catch(e){ aviso('La cámara se apagó. Toca ↻ o sal y vuelve a entrar.'); return; }
+  conectar();
+  if (seguiaGrabando) empezarCel();
+}
+function reconectarManual(){ conectar(); }
+function enviarEstado(){
+  if (dcCel && dcCel.readyState === 'open')
+    dcCel.send(JSON.stringify({rec: grabandoCel, pausa: pausadoCel, t: totalCel, orient, pausaTx: pausadoTx}));
+}
+function cambiarOrient(){
+  if (grabandoCel){ preguntar('Termina la copia del celular antes de cambiar entre horizontal y vertical.', 'Entendido', true); return; }
+  orient = orient === 'h' ? 'v' : 'h';
+  grabarLS('yv_orient', orient);
+  ajustarLienzo();
+  enviarEstado();
+}
+function voltear(){ volteado = !volteado; }
+
+/* Pausa de la transmisión: la laptop muestra la placa "En pausa" y deja de grabar */
+function alternarPausaTx(){
+  pausadoTx = !pausadoTx;
+  aplicarEstadoPistas();
+  if (grabandoCel){
+    if (pausadoTx && !pausadoCel){ pausarCel(); copiaAutoPausada = true; }
+    else if (!pausadoTx && copiaAutoPausada && pausadoCel){ pausarCel(); copiaAutoPausada = false; }
+  }
+  $('#bPausa').textContent = pausadoTx ? '▶' : '⏸';
+  $('#bPausa').classList.toggle('activo', pausadoTx);
+  $('#bPausa').title = pausadoTx ? 'Reanudar transmisión' : 'Pausar transmisión';
+  $('#bandaPausa').hidden = !pausadoTx;
+  enviarEstado();
+}
+
+/* Copia de respaldo en el celular, en partes cortas para no llenar la memoria */
+function alternarRec(){
+  if (!grabandoCel) { empezarCel(); return; }
+  preguntar('¿Terminar la copia del celular?', 'Terminar').then(ok => { if (ok) detenerCel(); });
+}
+let respuestaDlg = null;
+function preguntar(texto, textoSi, soloAviso){
+  if (respuestaDlg) respuestaDlg(false);
+  $('#dlgTxt').textContent = texto;
+  $('#dlgSi').textContent = textoSi || 'Sí';
+  $('#dlgNo').hidden = !!soloAviso;
+  $('#dlgCel').hidden = false;
+  return new Promise(res => { respuestaDlg = res; });
+}
+function responderDlg(v){
+  $('#dlgCel').hidden = true;
+  const r = respuestaDlg; respuestaDlg = null;
+  if (r) r(v);
+}
+function empezarCel(){
+  if (!salida || grabandoCel) return;
+  grabandoCel = true; pausadoCel = false; copiaAutoPausada = false; nSegCel = 0; totalCel = 0;
+  $('#bRec').classList.add('grabando');
+  $('#bGirar').disabled = true; $('#bOrient').disabled = true;
+  clearInterval(relojCel); relojCel = setInterval(tickCel, 1000);
+  segmentoCel();
+  if (pausadoTx){ pausarCel(); copiaAutoPausada = true; }
+  pintarCel(); enviarEstado();
+}
+function segmentoCel(){
+  if (grab && grab.state !== 'inactive') grab.stop();
+  nSegCel++; segAcumCel = 0;
+  const mt = tipoVideoCel(), propios = [], nombre = nombreArchivo('celular', nSegCel, extDe(mt));
+  let r;
+  try{ r = new MediaRecorder(salida, mt ? {mimeType:mt, videoBitsPerSecond:4000000} : {}); }
+  catch(e){ r = new MediaRecorder(salida); }
+  r.ondataavailable = e => e.data.size && propios.push(e.data);
+  r.onstop = () => descargar(propios, r.mimeType, nombre);
+  r.start(1000);
+  if (pausadoCel) r.pause();
+  grab = r;
+}
+function tickCel(){
+  if (grabandoCel && !pausadoCel){
+    totalCel++; segAcumCel++;
+    if (segAcumCel >= SEG_CEL_MIN * 60) segmentoCel();
+  }
+  pintarCel(); enviarEstado();
+}
+function pintarCel(){
+  if (!grabandoCel) { $('#tiempo').textContent = ''; return; }
+  $('#tiempo').innerHTML = `<span class="punto ${pausadoCel ? 'pausa' : 'rec'}"></span>${pausadoCel ? 'Pausa · ' : ''}${reloj(totalCel)}`;
+}
+function pausarCel(){
+  if (!grabandoCel || !grab) return;
+  pausadoCel = !pausadoCel;
+  if (pausadoCel && grab.state === 'recording') grab.pause();
+  if (!pausadoCel && grab.state === 'paused') grab.resume();
+  pintarCel(); enviarEstado();
+}
+function detenerCel(){
+  if (!grabandoCel) return;
+  grabandoCel = false; pausadoCel = false; copiaAutoPausada = false;
+  clearInterval(relojCel);
+  if (grab && grab.state !== 'inactive') grab.stop();
+  grab = null;
+  $('#bRec').classList.remove('grabando');
+  $('#bGirar').disabled = false; $('#bOrient').disabled = false;
+  pintarCel(); enviarEstado();
+}
+async function girar(){
+  if (grabandoCel) return;
+  facing = facing === 'environment' ? 'user' : 'environment';
+  try{
+    const nuevo = await navigator.mediaDevices.getUserMedia({video: restricciones(false).video});
+    const pista = nuevo.getVideoTracks()[0];
+    stream.getVideoTracks().forEach(t => { t.stop(); stream.removeTrack(t); });
+    stream.addTrack(pista);
+    $('#vidCel').srcObject = stream;
+    try{ await $('#vidCel').play(); }catch(e){}
+  }catch(e){ facing = facing === 'environment' ? 'user' : 'environment'; }
+}
+function salirCamara(){
+  responderDlg(false);
+  detenerCel();
+  clearInterval(cicloCelTimer);
+  cancelAnimationFrame(bucle);
+  try{ pcCel && pcCel.close(); }catch(e){}
+  pcCel = null; dcCel = null;
+  if (stream) stream.getTracks().forEach(t => t.stop());
+  stream = null; salida = null; pausadoTx = false;
+  $('#bandaPausa').hidden = true; $('#bPausa').textContent = '⏸'; $('#bPausa').classList.remove('activo');
+  $('#vidCel').srcObject = null;
+  aviso(''); nota('');
+  giroUI = 0; $('#camara').style.cssText = '';
+  soltarPantalla();
+  mostrar('inicio');
+  return true;
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+  if (visible('camara') || visible('monitor')) pantallaEncendida();
+  if (visible('camara')) cicloCel();
+});
+
+/* =====================================================================
+   INSTALACIÓN COMO APP
+   ===================================================================== */
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+let pedidoInstalar = null;
+const yaInstalada = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  pedidoInstalar = e;
+  if (!yaInstalada) { $('#tarjetaInstalar').hidden = false; $('#bInstalar').hidden = false; }
+});
+async function instalar(){
+  if (!pedidoInstalar) return;
+  pedidoInstalar.prompt();
+  await pedidoInstalar.userChoice;
+  pedidoInstalar = null;
+  $('#tarjetaInstalar').hidden = true;
+}
+window.addEventListener('appinstalled', () => { $('#tarjetaInstalar').hidden = true; });
+if (esIOS && !yaInstalada) {
+  $('#tarjetaInstalar').hidden = false;
+  $('#textoInstalar').innerHTML = 'En Safari toca <b>Compartir</b> (el cuadro con la flecha ↑) y luego <b>Agregar a pantalla de inicio</b>.';
+}
+
+/* ---------- Arranque ---------- */
+$('#codIn').addEventListener('input', e => { const c = normalizarCodigo(e.target.value); e.target.value = c.length > 4 ? c.slice(0,4) + '-' + c.slice(4) : c; });
+$('#logPass').addEventListener('keydown', e => { if (e.key === 'Enter') ingresar(); });
+if (new URLSearchParams(location.search).get('sala')) prepararCelular();
+else cargarContexto();
+</script>
+</body>
+</html>
