@@ -50,19 +50,13 @@ label{font-size:13px;color:var(--sub);display:flex;flex-direction:column;gap:6px
   <div class="marca"><span id="iso"></span><div><h1>Yupavideo · Administración</h1><small>Yupasoft</small></div></div>
 
   <div class="tarjeta" id="tLogin">
-    <h2>Iniciar sesión</h2>
-    <div class="grid">
-      <label>Correo <input id="email" type="email" autocomplete="username"></label>
-      <label>Contraseña <input id="pass" type="password" autocomplete="current-password"></label>
-    </div>
-    <div class="fila"><button id="bIngresar" onclick="ingresar()">Ingresar</button><a href="./">← Volver a la app</a></div>
-    <div class="error" id="errLogin"></div>
+    <p id="errLogin">Cargando…</p>
   </div>
 
   <div id="panel" hidden style="display:flex;flex-direction:column;gap:16px">
     <div class="fila" style="justify-content:space-between">
       <span class="mono" id="quien" style="color:var(--sub);font-size:13px"></span>
-      <div class="fila"><a href="./">Abrir la app</a><button class="sec mini" onclick="salir()">Cerrar sesión</button></div>
+      <div class="fila"><a href="./">← Volver a la app</a><button class="sec mini" onclick="salir()">Cerrar sesión</button></div>
     </div>
 
     <div class="tarjeta">
@@ -178,13 +172,14 @@ async function ingresar(){
   }catch(e){ $('#errLogin').textContent = /invalid/i.test(e.message) ? 'Correo o contraseña incorrectos.' : e.message; }
   finally{ $('#bIngresar').disabled = false; }
 }
-async function salir(){ try{ await sb('/auth/v1/logout', {method:'POST'}); }catch(e){} guardarSesion(null); location.reload(); }
+async function salir(){ try{ await sb('/auth/v1/logout', {method:'POST'}); }catch(e){} guardarSesion(null); location.replace('./'); }
 
 async function iniciar(){
-  if (!ses){ $('#tLogin').hidden = false; $('#panel').hidden = true; return; }
+  // Un solo lugar de ingreso: sin sesión, se va a la pantalla de ingreso de la app
+  if (!ses){ location.replace('./'); return; }
   try{
     const c = await rpc('yv_mi_contexto');
-    if (!c.es_super){ $('#errLogin').textContent = 'Este usuario no es administrador de Yupavideo.'; $('#tLogin').hidden = false; $('#panel').hidden = true; return; }
+    if (!c.es_super){ location.replace('./'); return; }
     $('#quien').textContent = 'Administrador: ' + (c.email || '');
     $('#tLogin').hidden = true; $('#panel').hidden = false;
     limpiarForm();
@@ -334,7 +329,6 @@ async function borrarLogo(id, nombre){
   if (!confirm('¿Borrar el logo "' + nombre + '"?')) return;
   try{ await rpc('yv_admin_borrar_logo', {p_logo: id}); await cargar(); }catch(e){ alert(e.message); }
 }
-$('#pass').addEventListener('keydown', e => { if (e.key === 'Enter') ingresar(); });
 iniciar();
 </script>
 </body>
