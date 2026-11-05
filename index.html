@@ -255,6 +255,7 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
     <div class="marca"><span id="isoChico"></span><strong id="nombreEmpresa">Yupavideo</strong></div>
     <div class="der">
       <span class="estado" id="estPC"><span class="punto"></span>Preparando…</span>
+      <span class="chip ok" id="chipRespaldo" hidden title="Si la conexión directa falla (datos móviles o WiFi que aísla equipos), el video pasa por el servidor de respaldo">🛡 Respaldo activo</span>
       <button class="sec" id="bSalida" onclick="abrirSalida()" title="Ventana solo con lo que sale en vivo, para la pantalla LED o el proyector">🖥 Salida limpia</button>
       <button class="sec" id="bTextos" onclick="abrirPanelTextos()">✎ Textos</button>
       <button class="sec" id="bLogo" onclick="abrirPanelLogo()">🏷 Logo: ninguno</button>
@@ -727,6 +728,7 @@ async function abrirSala(nuevo){
   $('#qr').innerHTML = '';
   new QRCode($('#qr'), {text:url, width:180, height:180});
   await Promise.race([obtenerIce(salaPC), esperar(4000)]);
+  $('#chipRespaldo').hidden = !hayRespaldo();
   desdePC = 0;
   try{ const f = await rpc('yv_leer', {p_codigo: salaPC, p_para: 'pc', p_desde: 0}, false); (f||[]).forEach(x => desdePC = Math.max(desdePC, x.id)); }catch(e){}
   try{ await rpc('yv_enviar', {p_codigo: salaPC, p_de: 'pc', p_tipo: 'hola', p_datos: {}}, false); }catch(e){}
@@ -1325,6 +1327,14 @@ function vigilarCalidad(){
     if (ultCam !== cam.id){ ultCam = cam.id; ultBytes = 0; ultT = 0; }
     try{
       const st = await cam.pc.getStats();
+      // ¿la cámara en vivo está pasando por el servidor de respaldo?
+      let par = null, viaRespaldo = false;
+      st.forEach(r => { if (r.type === 'transport' && r.selectedCandidatePairId) par = st.get(r.selectedCandidatePairId); });
+      if (!par) st.forEach(r => { if (r.type === 'candidate-pair' && r.nominated && r.state === 'succeeded') par = r; });
+      if (par){
+        const l = st.get(par.localCandidateId), rm = st.get(par.remoteCandidateId);
+        viaRespaldo = !!((l && l.candidateType === 'relay') || (rm && rm.candidateType === 'relay'));
+      }
       st.forEach(r => {
         if (r.type === 'inbound-rtp' && r.kind === 'video'){
           const ahora = r.timestamp, kbps = ultT ? Math.round((r.bytesReceived - ultBytes) * 8 / (ahora - ultT)) : 0;
@@ -1334,7 +1344,7 @@ function vigilarCalidad(){
           $('#calidad').hidden = false;
           $('#calidad').innerHTML = cam.pausaTx || pausaPrograma
             ? `<span class="punto pausa"></span>Transmisión en pausa`
-            : `<span class="punto ${bueno ? 'vivo' : 'malo'}"></span>Cámara ${cam.num} · ${ancho}×${alto} · ${fps} fps · ${(kbps/1000).toFixed(1)} Mbps ${bueno ? '· señal buena' : '· señal débil'}`;
+            : `<span class="punto ${bueno ? 'vivo' : 'malo'}"></span>Cámara ${cam.num} · ${ancho}×${alto} · ${fps} fps · ${(kbps/1000).toFixed(1)} Mbps ${bueno ? '· señal buena' : '· señal débil'}${viaRespaldo ? ' · vía respaldo' : ''}`;
         }
       });
     }catch(e){}
