@@ -69,8 +69,7 @@ label{font-size:13px;color:var(--sub);display:flex;flex-direction:column;gap:6px
       <h2>Cómo dar de alta a un cliente</h2>
       <ol class="pasos">
         <li>Crea la organización aquí abajo, con su fecha de vencimiento (último día que puede usar Yupavideo).</li>
-        <li>Crea su usuario en <b>Supabase → Authentication → Users → Add user → Create new user</b>, marcando <b>Auto Confirm User</b>.</li>
-        <li>Vuelve aquí y asigna ese correo a la organización con <b>+ Usuario</b>.</li>
+        <li>Pulsa <b>+ Usuario</b> en esa organización: escribe el correo, genera una contraseña y guárdala. Envíasela al cliente por un medio privado.</li>
         <li>Opcional: sube su logo con <b>+ Logo</b>, así ya lo tiene listo el día del evento.</li>
       </ol>
     </div>
@@ -88,6 +87,25 @@ label{font-size:13px;color:var(--sub);display:flex;flex-direction:column;gap:6px
         <button class="sec" id="bCancelar" onclick="limpiarForm()" hidden>Cancelar edición</button>
       </div>
       <div id="msgForm"></div>
+    </div>
+
+    <div class="tarjeta" id="tUsuario" hidden>
+      <h2 id="tituloUsuario">Nuevo usuario</h2>
+      <div class="grid">
+        <label id="lEmail">Correo <input id="uEmail" type="email" placeholder="usuario@correo.com" autocomplete="off"></label>
+        <label>Contraseña (mínimo 8)
+          <div class="fila" style="flex-wrap:nowrap"><input id="uClave" class="mono" autocomplete="new-password"><button class="sec mini" onclick="generarClave()">Generar</button></div>
+        </label>
+        <label id="lRol">Rol
+          <select id="uRol"><option value="operador">Operador (solo transmite)</option><option value="admin">Responsable de la organización</option></select>
+        </label>
+      </div>
+      <div class="fila">
+        <button id="bUsuario" onclick="guardarUsuario()">Crear usuario</button>
+        <button class="sec" onclick="cerrarUsuario()">Cancelar</button>
+        <button class="sec" onclick="copiarDatos()">Copiar datos para enviar</button>
+      </div>
+      <div id="msgUsuario"></div>
     </div>
 
     <div class="tarjeta">
@@ -183,7 +201,7 @@ async function cargar(){
   $('#lista').innerHTML = empresas.map(e => {
     const estado = !e.activa ? '<span class="chip mal">Inactiva</span>' : e.vigente ? '<span class="chip ok">Vigente</span>' : '<span class="chip mal">Vencida</span>';
     const usuarios = e.usuarios.length ? e.usuarios.map(u =>
-      `<div class="item"><span class="mono">${escapar(u.email)} · ${escapar(u.rol)}</span><button class="sec mini" onclick="quitarUsuario('${u.user_id}','${escapar(u.email)}')">Quitar</button></div>`).join('')
+      `<div class="item"><span class="mono">${escapar(u.email)} · ${u.rol === 'admin' ? 'responsable' : 'operador'}</span><span class="fila"><button class="sec mini" onclick="abrirClave('${u.user_id}','${escapar(u.email)}')">Cambiar clave</button><button class="sec mini" onclick="quitarUsuario('${u.user_id}','${escapar(u.email)}')">Quitar</button></span></div>`).join('')
       : '<p style="font-size:13px">Sin usuarios asignados.</p>';
     const logos = e.logos.length ? e.logos.map(l =>
       `<span class="logo">${escapar(l.nombre)} <button class="sec mini" onclick="borrarLogo('${l.id}','${escapar(l.nombre)}')">✕</button></span>`).join('')
@@ -223,11 +241,69 @@ async function guardarEmpresa(){
     await cargar();
   }catch(e){ $('#msgForm').innerHTML = `<span class="error">${escapar(e.message)}</span>`; }
 }
-async function asignar(id){
-  const email = prompt('Correo del usuario (ya creado en Supabase → Authentication):'); if (!email) return;
-  const rol = confirm('¿Es el responsable de la organización (admin)?\nAceptar = admin · Cancelar = operador') ? 'admin' : 'operador';
-  try{ await rpc('yv_admin_asignar', {p_email: email, p_empresa: id, p_rol: rol}); await cargar(); }
-  catch(e){ alert(e.message); }
+/* ---------- Usuarios (vía la Edge Function "yv-usuarios") ---------- */
+let modoUsuario = null; // {accion:'crear', empresa_id, empresa} | {accion:'clave', user_id, email}
+async function funcionUsuarios(cuerpo){
+  await asegurarToken();
+  if (!ses) throw new Error('Tu sesión venció. Vuelve a ingresar.');
+  const r = await fetch(SB_URL + '/functions/v1/yv-usuarios', {
+    method: 'POST',
+    headers: {'apikey': SB_KEY, 'Authorization': 'Bearer ' + ses.access_token, 'Content-Type': 'application/json'},
+    body: JSON.stringify(cuerpo)
+  });
+  const d = await r.json().catch(() => ({}));
+  if (r.status === 404) throw new Error('Falta instalar la función "yv-usuarios" en Supabase (Edge Functions).');
+  if (!r.ok) throw new Error(d.error || d.message || ('Error ' + r.status));
+  return d;
+}
+function generarClave(){
+  const abc = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  const b = new Uint32Array(12); crypto.getRandomValues(b);
+  $('#uClave').value = Array.from(b, n => abc[n % abc.length]).join('');
+}
+function asignar(id){
+  const e = empresas.find(x => x.id === id); if (!e) return;
+  modoUsuario = {accion: 'crear', empresa_id: id, empresa: e.nombre};
+  $('#tituloUsuario').textContent = 'Nuevo usuario · ' + e.nombre;
+  $('#lEmail').hidden = false; $('#lRol').hidden = false;
+  $('#uEmail').value = ''; $('#uRol').value = 'operador'; generarClave();
+  $('#bUsuario').textContent = 'Crear usuario'; $('#msgUsuario').innerHTML = '';
+  $('#tUsuario').hidden = false; $('#uEmail').focus();
+  $('#tUsuario').scrollIntoView({behavior: 'smooth', block: 'center'});
+}
+function abrirClave(uid, email){
+  modoUsuario = {accion: 'clave', user_id: uid, email};
+  $('#tituloUsuario').textContent = 'Cambiar contraseña · ' + email;
+  $('#lEmail').hidden = true; $('#lRol').hidden = true;
+  generarClave();
+  $('#bUsuario').textContent = 'Guardar nueva contraseña'; $('#msgUsuario').innerHTML = '';
+  $('#tUsuario').hidden = false;
+  $('#tUsuario').scrollIntoView({behavior: 'smooth', block: 'center'});
+}
+function cerrarUsuario(){ $('#tUsuario').hidden = true; modoUsuario = null; }
+async function guardarUsuario(){
+  if (!modoUsuario) return;
+  $('#msgUsuario').innerHTML = ''; $('#bUsuario').disabled = true;
+  try{
+    if (modoUsuario.accion === 'crear'){
+      const r = await funcionUsuarios({accion: 'crear', email: $('#uEmail').value, clave: $('#uClave').value, rol: $('#uRol').value, empresa_id: modoUsuario.empresa_id});
+      $('#msgUsuario').innerHTML = r.ya_existia
+        ? '<span class="ok">Ese correo ya tenía usuario: quedó asignado a la organización. Su contraseña NO cambió (usa "Cambiar clave" si hace falta).</span>'
+        : '<span class="ok">Usuario creado y asignado. Copia los datos y envíaselos al cliente.</span>';
+    } else {
+      await funcionUsuarios({accion: 'clave', user_id: modoUsuario.user_id, clave: $('#uClave').value});
+      $('#msgUsuario').innerHTML = '<span class="ok">Contraseña cambiada. Copia los datos y envíaselos.</span>';
+    }
+    await cargar();
+  }catch(e){ $('#msgUsuario').innerHTML = `<span class="error">${escapar(e.message)}</span>`; }
+  finally{ $('#bUsuario').disabled = false; }
+}
+function copiarDatos(){
+  const email = modoUsuario && modoUsuario.accion === 'clave' ? modoUsuario.email : $('#uEmail').value.trim();
+  const app = location.origin + location.pathname.replace(/admin\.html$/, '');
+  const txt = `Yupavideo · acceso\nApp: ${app}\nCorreo: ${email}\nContraseña: ${$('#uClave').value}\nAbre la app en la laptop con Google Chrome o Microsoft Edge.`;
+  navigator.clipboard.writeText(txt).then(() => { $('#msgUsuario').innerHTML = '<span class="ok">Copiado. Pégalo en WhatsApp o correo.</span>'; })
+    .catch(() => prompt('Copia estos datos:', txt));
 }
 async function quitarUsuario(uid, email){
   if (!confirm('¿Quitar a ' + email + ' de su organización? Ya no podrá transmitir.')) return;
