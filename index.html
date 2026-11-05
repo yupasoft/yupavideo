@@ -52,6 +52,32 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 .pie{text-align:center;font-size:12px;color:var(--sub);font-family:'IBM Plex Mono',monospace}
 .chip{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:3px 8px;border-radius:6px;background:var(--panel2);color:var(--sub)}
 .chip.ok{color:var(--tinta);background:var(--turq)}.chip.mal{color:var(--tinta);background:var(--ambar)}
+/* Pantalla de acceso */
+#inicio{min-height:100%;background:radial-gradient(1200px 600px at 50% -10%, #17304F 0%, var(--tinta) 60%)}
+#inicio .centro{min-height:100vh;justify-content:center;padding-top:32px}
+.acceso{background:var(--claro);color:var(--tinta);border-radius:16px;overflow:hidden;box-shadow:0 18px 50px #0007;width:100%;max-width:400px;margin:0 auto}
+.acceso-cab{background:#0F2036;border-bottom:3px solid var(--turq);padding:26px 20px 22px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.acceso-titulo{font-size:28px;font-weight:700;color:var(--claro);letter-spacing:-.3px}
+.acceso-sub{font-size:13px;color:var(--gris)}
+.acceso-cuerpo{padding:22px 20px 24px;display:flex;flex-direction:column;gap:14px}
+.acceso label{color:#3B4E68;font-size:13px;font-weight:600}
+.acceso p{color:#4A5D78}
+.acceso b{color:var(--tinta)}
+.acceso input,.acceso select{background:#fff;border:1px solid #CFDAE6;color:var(--tinta)}
+.acceso input:focus,.acceso select:focus{outline:2px solid var(--turq);outline-offset:0;border-color:var(--turq)}
+.acceso .clave{position:relative}
+.acceso .clave input{padding-right:46px}
+.acceso .ojo{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:transparent;color:#6B7F99;padding:6px 8px;font-size:16px}
+.b-ingresar{background:var(--tinta);color:var(--claro);padding:13px 16px;display:flex;align-items:center;justify-content:center;gap:8px}
+.b-ingresar:hover{background:#163055}
+.b-sec{background:#E3EAF2;color:var(--tinta);padding:10px 14px}
+.acceso .error{color:#B3261E}
+.acceso a{color:#0E8F7A;font-weight:600;font-size:14px}
+.acceso .chip{background:#E3EAF2;color:#3B4E68}
+.acceso .chip.ok{background:var(--turq);color:var(--tinta)}.acceso .chip.mal{background:var(--ambar);color:var(--tinta)}
+.link-cel{background:transparent;color:var(--gris);font-weight:500;font-size:14px;text-decoration:underline;text-underline-offset:3px;padding:6px;align-self:center}
+.link-cel:hover{color:var(--claro)}
+#errLogos{color:#FFB4A9;font-size:13px}
 /* Laptop */
 #monitor{display:flex;flex-direction:column;height:100vh}
 #monitor .cab{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;border-bottom:1px solid var(--borde);flex-wrap:wrap}
@@ -124,45 +150,53 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
 <!-- ============ INICIO ============ -->
 <section id="inicio" class="pantalla">
   <div class="centro">
-    <div class="marca">
-      <span id="isoGrande"></span>
-      <div><h1>Yupavideo</h1><small>por Yupasoft</small></div>
-    </div>
+    <div class="acceso">
+      <div class="acceso-cab">
+        <span id="isoGrande"></span>
+        <div class="acceso-titulo">Yupavideo</div>
+        <div class="acceso-sub" id="accesoSub">Ingresa tus credenciales para continuar</div>
+      </div>
 
-    <!-- Laptop: sesión -->
-    <div class="tarjeta" id="tarjetaLogin">
-      <h2>💻 Laptop · Iniciar sesión</h2>
-      <p>Ingresa con el usuario de tu organización. Ábrelo en Google Chrome o Microsoft Edge.</p>
-      <label>Correo <input id="logEmail" type="email" autocomplete="username"></label>
-      <label>Contraseña <input id="logPass" type="password" autocomplete="current-password"></label>
-      <button id="bLogin" onclick="ingresar()">Ingresar</button>
-      <div class="error" id="logError"></div>
-    </div>
+      <!-- Laptop: iniciar sesión -->
+      <div class="acceso-cuerpo" id="tarjetaLogin">
+        <label>Usuario (correo) <input id="logEmail" type="email" autocomplete="username" placeholder="usuario@correo.com"></label>
+        <label>Contraseña
+          <div class="clave">
+            <input id="logPass" type="password" autocomplete="current-password">
+            <button type="button" class="ojo" onclick="verClave()" aria-label="Mostrar u ocultar contraseña">👁</button>
+          </div>
+        </label>
+        <button id="bLogin" class="b-ingresar" onclick="ingresar()">→ Ingresar</button>
+        <div class="error" id="logError"></div>
+      </div>
 
-    <div class="tarjeta" id="tarjetaSesion" hidden>
-      <h2>💻 Laptop</h2>
-      <div id="infoSesion"></div>
-      <button id="bAbrirPantalla" onclick="iniciarMonitor()">Abrir pantalla de transmisión</button>
-      <div class="fila">
-        <button class="sec" onclick="cerrarSesion()">Cerrar sesión</button>
-        <a id="linkAdmin" href="admin.html" hidden>Panel de administración →</a>
+      <!-- Laptop: sesión iniciada -->
+      <div class="acceso-cuerpo" id="tarjetaSesion" hidden>
+        <div id="infoSesion"></div>
+        <button id="bAbrirPantalla" class="b-ingresar" onclick="iniciarMonitor()">▶ Abrir pantalla de transmisión</button>
+        <div class="fila" style="justify-content:space-between">
+          <button class="b-sec" onclick="cerrarSesion()">Cerrar sesión</button>
+          <a id="linkAdmin" href="admin.html" hidden>Panel de administración →</a>
+        </div>
+      </div>
+
+      <!-- Celular -->
+      <div class="acceso-cuerpo" id="tarjetaCel" hidden>
+        <p id="textoCel">Escanea el QR que aparece en la laptop, o escribe su código.</p>
+        <input id="codIn" class="codigoIn" maxlength="9" placeholder="XXXX-XXXX" autocomplete="off">
+        <label>Calidad de transmisión
+          <select id="calSel">
+            <option value="720" selected>Estable · 720p (recomendada para eventos largos)</option>
+            <option value="1080">Alta · 1080p (necesita muy buena señal)</option>
+          </select>
+        </label>
+        <button id="bCamara" class="b-ingresar" onclick="iniciarCamara()">Usar como cámara</button>
+        <div class="error" id="celError"></div>
       </div>
     </div>
 
-    <!-- Celular -->
-    <div class="tarjeta" id="tarjetaCel">
-      <h2>📱 Celular</h2>
-      <p id="textoCel">Escanea el QR que aparece en la laptop, o escribe su código.</p>
-      <input id="codIn" class="codigoIn" maxlength="9" placeholder="XXXX-XXXX" autocomplete="off">
-      <label>Calidad de transmisión
-        <select id="calSel">
-          <option value="720" selected>Estable · 720p (recomendada para eventos largos)</option>
-          <option value="1080">Alta · 1080p (necesita muy buena señal)</option>
-        </select>
-      </label>
-      <button id="bCamara" onclick="iniciarCamara()">Usar como cámara</button>
-      <div class="error" id="celError"></div>
-    </div>
+    <button class="link-cel" id="linkCel" onclick="modoCelular(true)">📱 ¿Eres el celular-cámara? Ingresa el código</button>
+    <button class="link-cel" id="linkLogin" onclick="modoCelular(false)" hidden>💻 Volver al inicio de sesión</button>
 
     <div class="tarjeta" id="tarjetaInstalar" hidden>
       <h2>⬇ Instalar la app</h2>
@@ -209,6 +243,7 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
     <div id="panelLogo" hidden>
       <div class="pl-cab"><strong>Logo en la transmisión</strong><button class="sec" onclick="cerrarPanelLogo()">Listo</button></div>
       <p class="pl-nota">Sale en la imagen de esta laptop y en su grabación. Los logos se guardan en la cuenta de tu organización.</p>
+      <div id="errLogos"></div>
       <div id="listaLogos" class="pl-lista"></div>
       <label class="pl-agregar">+ Agregar logo (PNG con fondo transparente es lo mejor)
         <input type="file" accept="image/*" onchange="agregarLogo(this)">
@@ -304,7 +339,7 @@ function isotipo(px){
   }
   return `<svg width="${px}" height="${px}" viewBox="0 0 40 40" aria-hidden="true">${r}</svg>`;
 }
-$('#isoGrande').innerHTML = isotipo(44);
+$('#isoGrande').innerHTML = isotipo(48);
 $('#isoChico').innerHTML = isotipo(26);
 
 /* ---------- Utilidades ---------- */
@@ -400,13 +435,24 @@ async function cargarContexto(){
   catch(e){ if (!ses) ctx = null; else { $('#logError').textContent = 'Sin conexión con el servidor. Revisa internet.'; } }
   pintarInicio();
 }
+let modoCel = false;
+function modoCelular(on){
+  modoCel = on;
+  $('#tarjetaCel').hidden = !on;
+  $('#linkCel').hidden = on;
+  $('#linkLogin').hidden = !on;
+  $('#accesoSub').textContent = on ? 'Conecta este celular como cámara' : (ses && ctx ? 'Sesión iniciada' : 'Ingresa tus credenciales para continuar');
+  pintarInicio();
+}
+function verClave(){ const i = $('#logPass'); i.type = i.type === 'password' ? 'text' : 'password'; }
 function pintarInicio(){
   const conSesion = !!(ses && ctx);
-  $('#tarjetaLogin').hidden = conSesion;
-  $('#tarjetaSesion').hidden = !conSesion;
+  $('#tarjetaLogin').hidden = modoCel || conSesion;
+  $('#tarjetaSesion').hidden = modoCel || !conSesion;
+  if (!modoCel) $('#accesoSub').textContent = conSesion ? 'Sesión iniciada' : 'Ingresa tus credenciales para continuar';
   if (!conSesion) return;
   const tieneEmpresa = !!ctx.empresa_id;
-  let html = `<p><b style="color:var(--txt)">${ctx.empresa ? escapar(ctx.empresa) : 'Sin organización asignada'}</b><br><span class="mono" style="font-size:13px">${escapar(ctx.email || '')}</span></p>`;
+  let html = `<p><b>${ctx.empresa ? escapar(ctx.empresa) : 'Sin organización asignada'}</b><br><span class="mono" style="font-size:13px">${escapar(ctx.email || '')}</span></p>`;
   if (tieneEmpresa){
     html += ctx.vigente
       ? `<p><span class="chip ok">Licencia vigente</span> <span class="mono" style="font-size:13px">hasta el ${fechaBonita(ctx.vence_el)}</span></p>`
@@ -571,16 +617,27 @@ function aplicarPausaTxPC(on){
 /* ---------- Logo sobre el video ---------- */
 const puedeLogo = 'MediaStreamTrackProcessor' in window && 'MediaStreamTrackGenerator' in window && 'VideoFrame' in window;
 let logosEmpresa = [];
-let cfgLogo = {id:'', pos:'sd', tam:25, opac:100, sombra:true};
-try{ Object.assign(cfgLogo, JSON.parse(leerLS('yv_cfglogo') || '{}')); }catch(e){}
+const CFG_BASE = {id:'', elegido:false, pos:'sd', tam:25, opac:100, sombra:true};
+let cfgLogo = Object.assign({}, CFG_BASE);
 const imgLogos = {};
 let compositor = null;
+function claveCfg(){ return 'yv_cfglogo_' + (ctx && ctx.empresa_id || 'x'); }
 
 async function cargarLogos(){
+  // la configuración del logo se guarda por organización (una misma laptop puede usar varias cuentas)
+  cfgLogo = Object.assign({}, CFG_BASE);
+  try{ Object.assign(cfgLogo, JSON.parse(leerLS(claveCfg()) || '{}')); }catch(e){}
+  $('#errLogos').textContent = '';
   try{
     logosEmpresa = await sb('/rest/v1/logos?select=id,nombre,imagen&order=creado_el.asc') || [];
-  }catch(e){ logosEmpresa = []; }
-  if (cfgLogo.id && !logosEmpresa.find(l => l.id === cfgLogo.id)) cfgLogo.id = '';
+  }catch(e){
+    logosEmpresa = [];
+    $('#errLogos').textContent = 'No se pudieron cargar los logos: ' + e.message;
+  }
+  if (cfgLogo.id && !logosEmpresa.find(l => l.id === cfgLogo.id)) { cfgLogo.id = ''; cfgLogo.elegido = false; }
+  // si nunca se eligió nada, se usa el primer logo de la organización
+  if (!cfgLogo.id && !cfgLogo.elegido && logosEmpresa.length) cfgLogo.id = logosEmpresa[0].id;
+  if (cfgLogo.id) imagenLogo(cfgLogo.id);
   pintarPanelLogo();
 }
 function imagenLogo(id){
@@ -630,9 +687,9 @@ function componer(s){
   proc.readable.pipeThrough(paso, {signal: ctrl.signal}).pipeTo(gen.writable, {signal: ctrl.signal}).catch(() => {});
   return new MediaStream([gen, ...s.getAudioTracks()]);
 }
-function guardarCfgLogo(){ grabarLS('yv_cfglogo', JSON.stringify(cfgLogo)); }
+function guardarCfgLogo(){ grabarLS(claveCfg(), JSON.stringify(cfgLogo)); }
 function ponerCfg(k, v){ cfgLogo[k] = v; guardarCfgLogo(); pintarPanelLogo(); }
-function elegirLogo(id){ cfgLogo.id = id; imagenLogo(id); guardarCfgLogo(); pintarPanelLogo(); }
+function elegirLogo(id){ cfgLogo.id = id; cfgLogo.elegido = true; imagenLogo(id); guardarCfgLogo(); pintarPanelLogo(); }
 function abrirPanelLogo(){ pintarPanelLogo(); $('#panelLogo').hidden = false; }
 function cerrarPanelLogo(){ $('#panelLogo').hidden = true; }
 function pintarPanelLogo(){
@@ -946,12 +1003,13 @@ async function prepararCelular(){
   const sala = normalizarCodigo(new URLSearchParams(location.search).get('sala'));
   if (!sala) return;
   $('#codIn').value = verCodigo(sala);
-  $('#tarjetaLogin').hidden = true; $('#tarjetaSesion').hidden = true;
+  modoCelular(true);
+  $('#linkLogin').hidden = true;
   $('#bCamara').textContent = '▶ Empezar a transmitir';
-  $('#bCamara').style.padding = '20px'; $('#bCamara').style.fontSize = '20px';
+  $('#bCamara').style.padding = '18px'; $('#bCamara').style.fontSize = '19px';
   try{
     const i = await rpc('yv_info_sala', {p_codigo: sala}, false);
-    if (i.valida) $('#textoCel').innerHTML = `Este celular será la cámara de <b style="color:var(--txt)">${escapar(i.empresa)}</b>. Toca el botón y acepta los permisos de cámara y micrófono.`;
+    if (i.valida) $('#textoCel').innerHTML = `Este celular será la cámara de <b>${escapar(i.empresa)}</b>. Toca el botón y acepta los permisos de cámara y micrófono.`;
     else $('#celError').textContent = 'Este código ya no es válido. Escanea de nuevo el QR que muestra la laptop.';
   }catch(e){ $('#celError').textContent = 'Sin conexión. Revisa el internet del celular.'; }
 }
