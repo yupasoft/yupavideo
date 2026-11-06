@@ -1,7 +1,7 @@
 // Yupavideo · service worker (Yupasoft)
 // Siempre intenta traer la versión nueva de internet; si no hay conexión, usa la guardada.
 // Las llamadas a Supabase y las conexiones de video NO pasan por aquí.
-const CACHE = 'yupavideo-v10';
+const CACHE = 'yupavideo-v12';
 const ARCHIVOS = [
   './',
   './index.html',
