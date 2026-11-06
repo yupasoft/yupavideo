@@ -52,6 +52,11 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 .pie{text-align:center;font-size:12px;color:var(--sub);font-family:'IBM Plex Mono',monospace}
 .chip{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:3px 8px;border-radius:6px;background:var(--panel2);color:var(--sub)}
 .chip.ok{color:var(--tinta);background:var(--turq)}.chip.mal{color:var(--tinta);background:var(--ambar)}
+/* Logo animado de Yupasoft en la barra superior */
+.logoNav{display:flex;align-items:center}
+.logoNav svg{height:22px;width:auto;display:block}
+.sepNav{width:1px;height:22px;background:var(--borde)}
+#slotLogin svg{height:32px}
 /* Pantalla de acceso */
 #inicio{min-height:100%;background:radial-gradient(1200px 600px at 50% -10%, #17304F 0%, var(--tinta) 60%)}
 #inicio .centro{min-height:100vh;justify-content:center;padding-top:32px}
@@ -183,7 +188,7 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
   <div class="centro">
     <div class="acceso">
       <div class="acceso-cab">
-        <span id="isoGrande"></span>
+        <span class="logoNav" id="slotLogin"></span>
         <div class="acceso-titulo">Yupavideo</div>
         <div class="acceso-sub" id="accesoSub">Ingresa tus credenciales para continuar</div>
       </div>
@@ -252,7 +257,31 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
 <!-- ============ LAPTOP ============ -->
 <section id="monitor" class="pantalla" hidden>
   <div class="cab">
-    <div class="marca"><span id="isoChico"></span><strong id="nombreEmpresa">Yupavideo</strong></div>
+    <div class="marca"><span class="logoNav" id="slotMonitor"><svg viewBox="0 0 718 101" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Yupasoft"><style>
+.ycnv{transform-box:fill-box;transform-origin:center}
+.yvnv{opacity:.3}
+.yfnv{animation:ycnva 5.6s cubic-bezier(.3,1.4,.5,1) infinite both}
+.ywnv{animation:ywnva .7s cubic-bezier(.22,1,.36,1) .55s backwards}
+@keyframes ycnva{
+  0%  {opacity:.3;transform:scale(.78)}
+  7%  {opacity:1; transform:scale(1.1)}
+  12% {opacity:1; transform:scale(1)}
+  76% {opacity:1; transform:scale(1)}
+  88%,100% {opacity:.3;transform:scale(.78)}
+}
+@keyframes ywnva{from{opacity:0;transform:translateX(-14px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){
+  .yfnv,.ywnv{animation:none}
+}
+</style><rect class="ycnv yvnv" x="1.6" y="1.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yvnv" x="1.6" y="28.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yvnv" x="1.6" y="55.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yfnv" x="0" y="81" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.000s"/><rect class="ycnv yvnv" x="28.6" y="1.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yvnv" x="28.6" y="28.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yfnv" x="27" y="54" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.120s"/><rect class="ycnv yfnv" x="27" y="81" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.060s"/><rect class="ycnv yvnv" x="55.6" y="1.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yfnv" x="54" y="27" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.300s"/><rect class="ycnv yfnv" x="54" y="54" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.240s"/><rect class="ycnv yfnv" x="54" y="81" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.180s"/><rect class="ycnv yfnv" x="81" y="0" width="20" height="20" rx="5.5" fill="#F2A93B" style="animation-delay:0.540s"/><rect class="ycnv yfnv" x="81" y="27" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.480s"/><rect class="ycnv yfnv" x="81" y="54" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.420s"/><rect class="ycnv yfnv" x="81" y="81" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.360s"/><g class="ywnv"><defs><clipPath id="capnv"><rect x="-14" y="0" width="82" height="96"/></clipPath></defs>
+<g transform="translate(143,3)" clip-path="url(#capnv)"><path d="M0,0 L26,44 L52,0" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="8"/><path d="M26,44 L26,96" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="8"/></g>
+<g transform="translate(221,3)" clip-path="url(#capnv)"><path d="M0,0 L0,57 A26,30 0 0 0 52,57 L52,0" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="8"/></g>
+<g transform="translate(304,3)" clip-path="url(#capnv)"><path d="M0,96 L0,0 L20,0 A26,26 0 0 1 20,52 L0,52" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="8"/></g>
+<g transform="translate(374,3)" clip-path="url(#capnv)"><path d="M0,96 L26,0 L52,96" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="8"/><path d="M9,72 L43,72" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="8"/></g>
+<g transform="translate(445,3)" clip-path="url(#capnv)"><path d="M47,28.5 A21,19.5 0 1 0 26,48 A21,19.5 0 1 1 5,67.5" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="8"/></g>
+<g transform="translate(518,3)" clip-path="url(#capnv)"><path d="M2,48 A24,39 0 0 1 50,48 A24,39 0 0 1 2,48 Z" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="8"/></g>
+<g transform="translate(597,3)" clip-path="url(#capnv)"><path d="M0,96 L0,0 L46,0" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="8"/><path d="M0,48 L36,48" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="8"/></g>
+<g transform="translate(654,3)" clip-path="url(#capnv)"><path d="M0,9 L52,9" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="8"/><path d="M26,9 L26,96" fill="none" stroke="#FFFFFF" stroke-width="18" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="8"/></g></g></svg></span><span class="sepNav"></span><strong id="nombreEmpresa">Yupavideo</strong></div>
     <div class="der">
       <span class="estado" id="estPC"><span class="punto"></span>Preparando…</span>
       <span class="chip ok" id="chipRespaldo" hidden title="Si la conexión directa falla (datos móviles o WiFi que aísla equipos), el video pasa por el servidor de respaldo">🛡 Respaldo activo</span>
@@ -402,11 +431,15 @@ function isotipo(px){
   }
   return `<svg width="${px}" height="${px}" viewBox="0 0 40 40" aria-hidden="true">${r}</svg>`;
 }
-$('#isoGrande').innerHTML = isotipo(48);
-$('#isoChico').innerHTML = isotipo(26);
 
 /* ---------- Utilidades ---------- */
-function mostrar(id){ document.querySelectorAll('.pantalla').forEach(p => p.hidden = p.id !== id); }
+function mostrar(id){ document.querySelectorAll('.pantalla').forEach(p => p.hidden = p.id !== id); ubicarLogo(id); }
+/* Un solo logo animado en la página: se muestra en el login o en la barra de transmisión, según la pantalla */
+function ubicarLogo(id){
+  const svg = document.querySelector('.logoNav svg');
+  const dest = document.querySelector(id === 'monitor' ? '#slotMonitor' : '#slotLogin');
+  if (svg && dest && svg.parentNode !== dest) dest.appendChild(svg);
+}
 function visible(id){ return !$('#'+id).hidden; }
 function leerLS(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 function grabarLS(k,v){ try{ v === null ? localStorage.removeItem(k) : localStorage.setItem(k,v); }catch(e){} }
@@ -1861,6 +1894,7 @@ $('#codIn').addEventListener('input', e => {
   if (c.length === 8) validarCodigoCel(c);   // al completar el código, muestra de qué organización es
 });
 $('#logPass').addEventListener('keydown', e => { if (e.key === 'Enter') ingresar(); });
+ubicarLogo('inicio');
 if (new URLSearchParams(location.search).get('sala')) prepararCelular();
 else cargarContexto();
 </script>
