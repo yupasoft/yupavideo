@@ -327,12 +327,9 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
       <!-- Panel de logo -->
       <div id="panelLogo" class="panelLat" hidden>
         <div class="pl-cab"><strong>Logo en la transmisión</strong><button class="sec" onclick="cerrarPanelLogo()">Listo</button></div>
-        <p class="pl-nota">Sale en la imagen de esta laptop y en su grabación. Los logos se guardan en la cuenta de tu organización.</p>
+        <p class="pl-nota">Sale en la imagen de esta laptop y en su grabación. Para agregar o cambiar logos, pídeselos a Yupasoft.</p>
         <div id="errLogos"></div>
         <div id="listaLogos" class="pl-lista"></div>
-        <label class="pl-agregar">+ Agregar logo (PNG con fondo transparente es lo mejor)
-          <input type="file" accept="image/*" onchange="agregarLogo(this)">
-        </label>
         <div class="pl-grupo"><span>Posición</span>
           <div class="pl-pos">
             <button data-pos="si" onclick="ponerCfg('pos','si')">↖</button>
@@ -1152,9 +1149,6 @@ function pintarPanelLogo(){
     d.className = 'pl-item' + (cfgLogo.id === l.id ? ' activo' : ''); d.title = l.nombre;
     const im = document.createElement('img'); im.src = l.imagen; im.alt = l.nombre; d.appendChild(im);
     d.onclick = () => elegirLogo(l.id);
-    const b = document.createElement('button'); b.className = 'borrar'; b.textContent = '✕'; b.title = 'Quitar este logo';
-    b.onclick = ev => { ev.stopPropagation(); quitarLogo(l.id); };
-    d.appendChild(b);
     lista.appendChild(d);
   });
   document.querySelectorAll('.pl-pos button').forEach(b => b.classList.toggle('activo', b.dataset.pos === cfgLogo.pos));
@@ -1166,42 +1160,6 @@ function pintarPanelLogo(){
   const actual = logosEmpresa.find(x => x.id === cfgLogo.id);
   $('#bLogo').textContent = '🏷 Logo: ' + (actual ? actual.nombre : 'ninguno');
 }
-function agregarLogo(input){
-  const f = input.files && input.files[0]; input.value = '';
-  if (!f) return;
-  const lector = new FileReader();
-  lector.onload = () => {
-    const im = new Image();
-    im.onload = async () => {
-      const esc = Math.min(1, 1000 / Math.max(im.naturalWidth, im.naturalHeight));
-      const cv = document.createElement('canvas');
-      cv.width = Math.round(im.naturalWidth * esc); cv.height = Math.round(im.naturalHeight * esc);
-      cv.getContext('2d').drawImage(im, 0, 0, cv.width, cv.height);
-      const data = cv.toDataURL('image/png');
-      if (data.length > 1400000){ alert('La imagen es muy pesada. Usa una más pequeña.'); return; }
-      try{
-        const r = await sb('/rest/v1/logos', {method:'POST', headers:{'Prefer':'return=representation'},
-          body: JSON.stringify({empresa_id: ctx.empresa_id, nombre: f.name.replace(/\.[^.]+$/, '').slice(0,60), imagen: data})});
-        logosEmpresa.push(r[0]);
-        elegirLogo(r[0].id);
-      }catch(e){ alert('No se pudo guardar el logo: ' + e.message); }
-    };
-    im.onerror = () => alert('No pude leer esa imagen.');
-    im.src = lector.result;
-  };
-  lector.readAsDataURL(f);
-}
-async function quitarLogo(id){
-  if (!confirm('¿Quitar este logo de la cuenta de tu organización?')) return;
-  try{
-    await sb('/rest/v1/logos?id=eq.' + encodeURIComponent(id), {method:'DELETE'});
-    logosEmpresa = logosEmpresa.filter(x => x.id !== id);
-    delete imgLogos[id];
-    if (cfgLogo.id === id) cfgLogo.id = '';
-    guardarCfgLogo(); pintarPanelLogo();
-  }catch(e){ alert('No se pudo quitar: ' + e.message); }
-}
-
 /* ---------- Textos en pantalla (zócalos) ---------- */
 let textos = [], textoVivo = null, txColor = '#2ED3B7';
 function claveTx(){ return 'yv_textos_' + (ctx && ctx.empresa_id || 'x'); }
