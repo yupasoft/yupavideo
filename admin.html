@@ -75,7 +75,8 @@ label{font-size:13px;color:var(--sub);display:flex;flex-direction:column;gap:6px
         <label>Licencia vigente hasta (inclusive) <input id="fVence" type="date"></label>
         <label>Notas (solo para ti) <input id="fNotas" placeholder="Ej.: evento 4 dic, cortesía"></label>
       </div>
-      <label style="flex-direction:row;align-items:center;gap:8px;color:var(--txt)"><input type="checkbox" id="fActiva" checked> Activa</label>
+      <label style="flex-direction:row;align-items:center;gap:8px;color:var(--txt)"><input type="checkbox" id="fIndef" onchange="pintarIndef()"> Sin vencimiento (sigue vigente hasta que la desactives)</label>
+      <label style="flex-direction:row;align-items:center;gap:8px;color:var(--txt)"><input type="checkbox" id="fActiva" checked> Activa (desmárcala para cortar el acceso)</label>
       <div class="fila">
         <button id="bGuardar" onclick="guardarEmpresa()">Guardar</button>
         <button class="sec" id="bCancelar" onclick="limpiarForm()" hidden>Cancelar edición</button>
@@ -202,7 +203,7 @@ async function cargar(){
       `<span class="logo">${escapar(l.nombre)} <button class="sec mini" onclick="borrarLogo('${l.id}','${escapar(l.nombre)}')">✕</button></span>`).join('')
       : '<p style="font-size:13px">Sin logos.</p>';
     return `<div class="emp">
-      <div class="cab"><div><b>${escapar(e.nombre)}</b> ${estado}<br><span class="mono" style="font-size:13px;color:var(--sub)">Vigente hasta el ${fechaBonita(e.vence_el)}${e.notas ? ' · ' + escapar(e.notas) : ''}</span></div>
+      <div class="cab"><div><b>${escapar(e.nombre)}</b> ${estado}<br><span class="mono" style="font-size:13px;color:var(--sub)">${e.vence_el ? 'Vigente hasta el ' + fechaBonita(e.vence_el) : 'Sin vencimiento'}${e.notas ? ' · ' + escapar(e.notas) : ''}</span></div>
         <div class="fila"><button class="sec mini" onclick="editar('${e.id}')">Editar</button>
         <button class="sec mini" onclick="asignar('${e.id}')">+ Usuario</button>
         <button class="sec mini" onclick="subirLogo('${e.id}')">+ Logo</button></div></div>
@@ -215,22 +216,26 @@ function limpiarForm(){
   editando = null;
   $('#tituloForm').textContent = 'Nueva organización';
   $('#fNombre').value = ''; $('#fNotas').value = ''; $('#fActiva').checked = true;
-  const d = new Date(); d.setDate(d.getDate() + 30);
-  $('#fVence').value = d.toISOString().slice(0,10);
+  $('#fVence').value = fechaEn30(); $('#fIndef').checked = false; pintarIndef();
   $('#bCancelar').hidden = true; $('#msgForm').innerHTML = '';
 }
 function editar(id){
   const e = empresas.find(x => x.id === id); if (!e) return;
   editando = id;
   $('#tituloForm').textContent = 'Editar: ' + e.nombre;
-  $('#fNombre').value = e.nombre; $('#fVence').value = e.vence_el; $('#fNotas').value = e.notas || ''; $('#fActiva').checked = e.activa;
+  $('#fNombre').value = e.nombre; $('#fVence').value = e.vence_el || fechaEn30(); $('#fIndef').checked = !e.vence_el; pintarIndef(); $('#fNotas').value = e.notas || ''; $('#fActiva').checked = e.activa;
   $('#bCancelar').hidden = false; $('#msgForm').innerHTML = '';
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
+/* Sin vencimiento: la fecha se apaga y se guarda vacía */
+function fechaEn30(){ const d = new Date(); d.setDate(d.getDate() + 30); return d.toISOString().slice(0,10); }
+function pintarIndef(){ $('#fVence').disabled = $('#fIndef').checked; }
 async function guardarEmpresa(){
   $('#msgForm').innerHTML = '';
+  const indef = $('#fIndef').checked;
+  if (!indef && !$('#fVence').value){ $('#msgForm').innerHTML = '<span class="error">Elige la fecha de vencimiento o marca "Sin vencimiento".</span>'; return; }
   try{
-    await rpc('yv_admin_guardar_empresa', {p_id: editando, p_nombre: $('#fNombre').value, p_vence: $('#fVence').value || null, p_activa: $('#fActiva').checked, p_notas: $('#fNotas').value || null});
+    await rpc('yv_admin_guardar_empresa', {p_id: editando, p_nombre: $('#fNombre').value, p_vence: indef ? null : $('#fVence').value, p_activa: $('#fActiva').checked, p_notas: $('#fNotas').value || null});
     limpiarForm();
     $('#msgForm').innerHTML = '<span class="ok">Guardado.</span>';
     await cargar();

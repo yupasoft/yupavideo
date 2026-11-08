@@ -420,7 +420,7 @@ const SB_KEY = 'sb_publishable_oHr1AqDbKi_lileKrmkhMg_4T6zYJ7E';
 const ICE = [
   {urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302']},
   {urls: 'stun:stun.cloudflare.com:3478'}
-  // Aquí irá el servidor de respaldo (TURN) en la siguiente fase
+  // El servidor de respaldo (TURN) se agrega al conectar: credenciales temporales de la función yv-turn
 ];
 const SEG_CARPETA_MIN = 15;   // laptop con carpeta: un archivo cada 15 min grabados
 const SEG_DESCARGA_MIN = 10;  // laptop sin carpeta: descarga cada 10 min grabados
@@ -555,7 +555,7 @@ function pintarInicio(){
   let html = `<p><b>${ctx.empresa ? escapar(ctx.empresa) : 'Sin organización asignada'}</b><br><span class="mono" style="font-size:13px">${escapar(ctx.email || '')}</span></p>`;
   if (tieneEmpresa){
     html += ctx.vigente
-      ? `<p><span class="chip ok">Licencia vigente</span> <span class="mono" style="font-size:13px">hasta el ${fechaBonita(ctx.vence_el)}</span></p>`
+      ? `<p><span class="chip ok">Licencia vigente</span> <span class="mono" style="font-size:13px">${ctx.vence_el ? 'hasta el ' + fechaBonita(ctx.vence_el) : 'sin vencimiento'}</span></p>`
       : `<p><span class="chip mal">Licencia ${ctx.activa ? 'vencida' : 'inactiva'}</span> <span class="mono" style="font-size:13px">${ctx.activa ? 'venció el ' + fechaBonita(ctx.vence_el) : ''}</span></p><p>Para renovarla, escribe a Yupasoft.</p>`;
   } else {
     html += `<p>Tu usuario aún no está asignado a una organización. Escribe a Yupasoft.</p>`;
