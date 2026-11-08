@@ -368,6 +368,7 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
   <div id="barraPC" hidden>
     <button id="bPausaTx" class="ambar" onclick="pausaTxDesdePC()">⏸ Pausar transmisión</button>
     <button id="bFormato" class="sec" onclick="cambiarFormato()">▭ Horizontal</button>
+    <button id="bCalidadProg" class="sec" onclick="cambiarCalidadProg()" title="Calidad del video final (salida limpia y grabación). Las cámaras se ajustan solas.">1080p</button>
     <label class="selAudio">🎤 <select id="selAudio" onchange="audioDe = this.value; aplicarAudio()"></select></label>
     <button id="bCarpeta" class="sec" onclick="elegirCarpeta()">📁 Elegir carpeta</button>
     <button id="bRecPC" class="rojo" onclick="alternarRecPC()">● Grabar en la laptop</button>
@@ -616,6 +617,7 @@ let camVivo = null, audioDe = 'vivo', pausaPrograma = false;
 let carpeta = null, grabandoPC = false, pausadoPC = false, grabAutoPausada = false, segPC = null, nSegPC = 0, totalPC = 0, relojPC = null;
 let statsTimer = null, ultBytes = 0, ultT = 0;
 let formatoProg = leerLS('yv_formato') || 'h';
+let calidadProg = leerLS('yv_calidad_prog') || '1080';
 let actx = null, bus = null, adest = null, monitorGain = null, sonidoOn = false;
 let gen = null, genWriter = null, progStream = null, oc = null, octx = null;
 
@@ -646,7 +648,10 @@ function prepararAudio(){
 }
 document.addEventListener('click', () => { if (actx && actx.state === 'suspended') actx.resume().catch(() => {}); });
 
-function dimsPrograma(){ return formatoProg === 'h' ? [1280, 720] : [720, 1280]; }
+function dimsPrograma(){
+  const [l, c] = calidadProg === '1080' ? [1920, 1080] : [1280, 720];
+  return formatoProg === 'h' ? [l, c] : [c, l];
+}
 function prepararPrograma(){
   if (!puedeComponer){ if (modoCanvas) prepararProgramaCanvas(); return; }
   const [W, H] = dimsPrograma();
@@ -907,7 +912,7 @@ function elegirCam(id){
   pintarCams();
 }
 function enviarACam(cam, obj){ if (cam && cam.dc && cam.dc.readyState === 'open'){ cam.dc.send(JSON.stringify(obj)); return true; } return false; }
-function enviarTally(cam){ enviarACam(cam, {tally: cam.id === camVivo, num: cam.num}); }
+function enviarTally(cam){ enviarACam(cam, {tally: cam.id === camVivo, num: cam.num, calidad: calidadProg}); }
 function datosDeCam(cam, d){
   if (!d || typeof d !== 'object') return;
   if (d.adios){ quitarCam(cam); return; }
@@ -1013,7 +1018,19 @@ function cambiarFormato(){
   prepararPrograma(); pintarFormato();
   if (segPC){ cerrarSegPC(); setTimeout(iniciarSegPC, 500); }   // cambia el tamaño: empieza una parte nueva
 }
-function pintarFormato(){ $('#bFormato').textContent = formatoProg === 'h' ? '▭ Horizontal' : '▯ Vertical'; $('#bFormato').hidden = !puedeLogo; }
+function pintarFormato(){
+  $('#bFormato').textContent = formatoProg === 'h' ? '▭ Horizontal' : '▯ Vertical'; $('#bFormato').hidden = !puedeLogo;
+  $('#bCalidadProg').textContent = calidadProg === '1080' ? 'Calidad: 1080p' : 'Calidad: 720p';
+}
+/* 1080p ↔ 720p: cambia el programa y avisa a todas las cámaras para que envíen en esa calidad */
+function cambiarCalidadProg(){
+  calidadProg = calidadProg === '1080' ? '720' : '1080';
+  grabarLS('yv_calidad_prog', calidadProg);
+  prepararPrograma(); pintarFormato();
+  camaras.forEach(c => enviarTally(c));
+  if (segPC){ cerrarSegPC(); setTimeout(iniciarSegPC, 500); }   // cambia el tamaño: empieza una parte nueva
+  avisoPC(calidadProg === '1080' ? 'Calidad 1080p: si la señal se pone ámbar, vuelve a 720p.' : 'Calidad 720p: más estable con WiFi regular.');
+}
 
 /* ---------- Salida limpia: ventana solo con el programa, para la pantalla LED ---------- */
 let salidaWin = null, vigiaSalida = null;
@@ -1328,7 +1345,7 @@ async function iniciarSegPC(){
     catch(e){ seg.writable = null; }
   }
   if (segPC !== seg) { if (seg.writable) seg.writable.close().catch(()=>{}); return; }
-  try{ seg.rec = new MediaRecorder(s, mt ? {mimeType:mt, videoBitsPerSecond:6000000} : {}); }
+  try{ seg.rec = new MediaRecorder(s, mt ? {mimeType:mt, videoBitsPerSecond: calidadProg === '1080' ? 10000000 : 6000000} : {}); }
   catch(e){ seg.rec = new MediaRecorder(s); }
   seg.rec.ondataavailable = e => {
     if (!e.data.size) return;
@@ -1649,6 +1666,7 @@ async function conectar(){
     if (d.cmd === 'detener') detenerCel();
     if (d.cmd === 'pausaTx') alternarPausaTx();
     if (typeof d.tally === 'boolean'){ tally = d.tally; numCam = d.num || numCam; pintarTally(); }
+    if ((d.calidad === '1080' || d.calidad === '720') && d.calidad !== calidad) cambiarCalidadCel(d.calidad);
   };
   p.onconnectionstatechange = () => {
     if (pcCel !== p) return;
@@ -1708,14 +1726,23 @@ function pintarTally(){
   else if (tally) estadoCel(`EN VIVO · Cámara ${numCam}`, 'rec');
   else estadoCel(`Cámara ${numCam} · en espera`, 'vivo');
 }
+async function cambiarCalidadCel(nueva){
+  calidad = nueva;
+  $('#calSel').value = nueva;
+  const vt = stream && stream.getVideoTracks()[0];
+  if (vt){ try{ await vt.applyConstraints(restricciones(false).video); }catch(e){} }
+  ajustarLienzo();
+  if (grabandoCel) segmentoCel();          // la copia sigue en una parte nueva con el nuevo tamaño
+  if (pcCel && pcCel.connectionState === 'connected') subirCalidad(pcCel);
+}
 async function subirCalidad(pc){
-  const tope = calidad === '1080' ? 6000000 : 3500000;
+  const tope = calidad === '1080' ? 8000000 : 4000000;
   for (const s of pc.getSenders()){
     if (s.track && s.track.kind === 'video'){
       const p = s.getParameters();
       if (!p.encodings || !p.encodings.length) p.encodings = [{}];
       p.encodings[0].maxBitrate = tope;
-      p.degradationPreference = 'maintain-framerate';
+      p.degradationPreference = 'balanced';
       try{ await s.setParameters(p); }catch(e){}
     }
   }
