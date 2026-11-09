@@ -184,6 +184,7 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
 <body>
 
 <!-- ============ INICIO ============ -->
+<div id="cintaComo" hidden style="position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:99999;background:#F2A93B;color:#0C1A2E;font-weight:700;font-size:13px;padding:5px 16px;border-radius:0 0 12px 12px;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.35)"></div>
 <section id="inicio" class="pantalla">
   <div class="centro">
     <div class="acceso">
@@ -206,19 +207,13 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
 }
 </style><rect class="ycnv yvnv" x="1.6" y="1.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yvnv" x="1.6" y="28.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yvnv" x="1.6" y="55.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yfnv" x="0" y="81" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.000s"/><rect class="ycnv yvnv" x="28.6" y="1.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yvnv" x="28.6" y="28.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yfnv" x="27" y="54" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.120s"/><rect class="ycnv yfnv" x="27" y="81" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.060s"/><rect class="ycnv yvnv" x="55.6" y="1.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yfnv" x="54" y="27" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.300s"/><rect class="ycnv yfnv" x="54" y="54" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.240s"/><rect class="ycnv yfnv" x="54" y="81" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.180s"/><rect class="ycnv yfnv" x="81" y="0" width="20" height="20" rx="5.5" fill="#F2A93B" style="animation-delay:0.540s"/><rect class="ycnv yfnv" x="81" y="27" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.480s"/><rect class="ycnv yfnv" x="81" y="54" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.420s"/><rect class="ycnv yfnv" x="81" y="81" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.360s"/></svg></span>
         <div class="acceso-titulo">Yupavideo</div>
-        <div class="acceso-sub" id="accesoSub">Ingresa tus credenciales para continuar</div>
+        <div class="acceso-sub" id="accesoSub">Entra con tu cuenta Yupasoft</div>
       </div>
 
-      <!-- Laptop: iniciar sesión -->
+      <!-- Laptop: el ingreso es en el portal Yupasoft -->
       <div class="acceso-cuerpo" id="tarjetaLogin">
-        <label>Usuario (correo) <input id="logEmail" type="email" autocomplete="username" placeholder="usuario@correo.com"></label>
-        <label>Contraseña
-          <div class="clave">
-            <input id="logPass" type="password" autocomplete="current-password">
-            <button type="button" class="ojo" onclick="verClave()" aria-label="Mostrar u ocultar contraseña">👁</button>
-          </div>
-        </label>
-        <button id="bLogin" class="b-ingresar" onclick="ingresar()">→ Ingresar</button>
+        <p style="margin:0 0 4px">Ingresa con tu usuario de <b>Yupasoft</b>.</p>
+        <a id="bPortal" class="b-ingresar" href="../portal/?volver=yupavideo" style="display:block;text-align:center;text-decoration:none">→ Ingresar con mi cuenta</a>
         <div class="error" id="logError"></div>
       </div>
 
@@ -228,7 +223,7 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
         <button id="bAbrirPantalla" class="b-ingresar" onclick="iniciarMonitor()">▶ Abrir pantalla de transmisión</button>
         <div class="fila" style="justify-content:space-between">
           <button class="b-sec" onclick="cerrarSesion()">Cerrar sesión</button>
-          <a id="linkAdmin" href="admin.html" hidden>Panel de administración →</a>
+          <a id="linkAdmin" href="../portal/?menu=1" hidden>← Portal Yupasoft</a>
         </div>
       </div>
 
@@ -505,30 +500,24 @@ async function asegurarToken(){
   })();
   await refrescando;
 }
-async function ingresar(){
-  const email = $('#logEmail').value.trim(), pass = $('#logPass').value;
-  $('#logError').textContent = '';
-  if (!email || !pass){ $('#logError').textContent = 'Escribe tu correo y contraseña.'; return; }
-  $('#bLogin').disabled = true; $('#bLogin').textContent = 'Ingresando…';
-  try{
-    const d = await sb('/auth/v1/token?grant_type=password', {method:'POST', body: JSON.stringify({email, password: pass})}, false);
-    guardarSesion({access_token: d.access_token, refresh_token: d.refresh_token, expires_at: Date.now()/1000 + d.expires_in});
-    $('#logPass').value = '';
-    await cargarContexto();
-  }catch(e){
-    $('#logError').textContent = /invalid/i.test(e.message) ? 'Correo o contraseña incorrectos.' : 'No se pudo ingresar: ' + e.message;
-  }finally{ $('#bLogin').disabled = false; $('#bLogin').textContent = 'Ingresar'; }
-}
 async function cerrarSesion(){
   try{ if (ses) await sb('/auth/v1/logout', {method:'POST'}); }catch(e){}
-  guardarSesion(null); ctx = null; pintarInicio();
+  guardarSesion(null); ctx = null; location.href = '../portal/';
 }
 
 /* ---------- Pantalla de inicio ---------- */
 let ctx = null;
+/* "Ver como": el administrador abre la app con ?como=<id de organización>. La base solo lo permite a superadmins. */
+const COMO = (() => { const v = new URLSearchParams(location.search).get('como'); return /^[0-9a-f-]{36}$/i.test(v || '') ? v : null; })();
+const esLaptop = () => !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) && !(navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
 async function cargarContexto(){
-  if (!ses){ ctx = null; pintarInicio(); return; }
-  try{ ctx = await rpc('yv_mi_contexto'); }
+  if (!ses){
+    ctx = null; pintarInicio();
+    // En laptop el ingreso está en el portal: se va directo. El celular-cámara no necesita ingresar.
+    if (esLaptop() && !modoCel) location.replace('../portal/?volver=yupavideo');
+    return;
+  }
+  try{ ctx = await rpc('yv_mi_contexto', COMO ? {p_como: COMO} : {}); }
   catch(e){ if (!ses) ctx = null; else { $('#logError').textContent = 'Sin conexión con el servidor. Revisa internet.'; } }
   pintarInicio();
 }
@@ -538,18 +527,17 @@ function modoCelular(on){
   $('#tarjetaCel').hidden = !on;
   $('#linkCel').hidden = on;
   $('#linkLogin').hidden = !on;
-  $('#accesoSub').textContent = on ? 'Conecta este celular como cámara' : (ses && ctx ? 'Sesión iniciada' : 'Ingresa tus credenciales para continuar');
+  $('#accesoSub').textContent = on ? 'Conecta este celular como cámara' : (ses && ctx ? 'Sesión iniciada' : 'Entra con tu cuenta Yupasoft');
   pintarInicio();
 }
-function verClave(){ const i = $('#logPass'); i.type = i.type === 'password' ? 'text' : 'password'; }
 function pintarInicio(){
   const conSesion = !!(ses && ctx);
   $('#tarjetaLogin').hidden = modoCel || conSesion;
   $('#tarjetaSesion').hidden = modoCel || !conSesion;
-  if (!modoCel) $('#accesoSub').textContent = conSesion ? 'Sesión iniciada' : 'Ingresa tus credenciales para continuar';
+  if (!modoCel) $('#accesoSub').textContent = conSesion ? 'Sesión iniciada' : 'Entra con tu cuenta Yupasoft';
   if (!conSesion) return;
   const tieneEmpresa = !!ctx.empresa_id;
-  let html = `<p><b>${ctx.empresa ? escapar(ctx.empresa) : 'Sin organización asignada'}</b><br><span class="mono" style="font-size:13px">${escapar(ctx.email || '')}</span></p>`;
+  let html = `<p><b>${ctx.empresa ? escapar(ctx.empresa) : 'Sin organización asignada'}</b><br><span class="mono" style="font-size:13px">${escapar(ctx.usuario || ctx.email || '')}</span></p>`;
   if (tieneEmpresa){
     html += ctx.vigente
       ? `<p><span class="chip ok">Licencia vigente</span> <span class="mono" style="font-size:13px">${ctx.vence_el ? 'hasta el ' + fechaBonita(ctx.vence_el) : 'sin vencimiento'}</span></p>`
@@ -559,7 +547,9 @@ function pintarInicio(){
   }
   $('#infoSesion').innerHTML = html;
   $('#bAbrirPantalla').hidden = !(tieneEmpresa && ctx.vigente);
-  $('#linkAdmin').hidden = !ctx.es_super;
+  $('#linkAdmin').hidden = false;
+  $('#cintaComo').hidden = !ctx.como;
+  if (ctx.como) $('#cintaComo').textContent = 'Viendo como ' + (ctx.empresa || '') + ' · modo administrador';
 }
 function escapar(t){ return String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
@@ -753,7 +743,7 @@ function lectorCam(cam, track){
 async function abrirSala(nuevo){
   estadoPC('Abriendo sala…', 'malo');
   try{
-    const r = await rpc('yv_abrir_sala', {p_codigo: nuevo ? null : (leerLS('yv_sala') || null)});
+    const r = await rpc('yv_abrir_sala', {p_codigo: nuevo ? null : (leerLS('yv_sala') || null), p_como: COMO});
     salaPC = r.codigo; grabarLS('yv_sala', salaPC);
   }catch(e){
     estadoPC('Error', 'malo');
@@ -1104,7 +1094,7 @@ async function cargarLogos(){
   cfgLogo = Object.assign({}, CFG_BASE);
   try{ Object.assign(cfgLogo, JSON.parse(leerLS(claveCfg()) || '{}')); }catch(e){}
   $('#errLogos').textContent = '';
-  try{ logosEmpresa = await sb('/rest/v1/logos?select=id,nombre,imagen&order=creado_el.asc') || []; }
+  try{ logosEmpresa = await sb('/rest/v1/logos?select=id,nombre,imagen&order=creado_el.asc&empresa_id=eq.' + encodeURIComponent(ctx.empresa_id || '')) || []; }
   catch(e){ logosEmpresa = []; $('#errLogos').textContent = 'No se pudieron cargar los logos: ' + e.message; }
   if (cfgLogo.id && !logosEmpresa.find(l => l.id === cfgLogo.id)) { cfgLogo.id = ''; cfgLogo.elegido = false; }
   if (!cfgLogo.id && !cfgLogo.elegido && logosEmpresa.length) cfgLogo.id = logosEmpresa[0].id;
@@ -1880,7 +1870,6 @@ $('#codIn').addEventListener('input', e => {
   e.target.value = c.length > 4 ? c.slice(0,4) + '-' + c.slice(4) : c;
   if (c.length === 8) validarCodigoCel(c);   // al completar el código, muestra de qué organización es
 });
-$('#logPass').addEventListener('keydown', e => { if (e.key === 'Enter') ingresar(); });
 if (new URLSearchParams(location.search).get('sala')) prepararCelular();
 else cargarContexto();
 </script>
