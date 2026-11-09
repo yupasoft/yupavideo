@@ -8,6 +8,7 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#0C1A2E">
+<script>try{if(localStorage.getItem("yp_tema")==="claro"){document.documentElement.setAttribute("data-tema","claro");document.querySelector('meta[name=theme-color]').content="#F4F7FA"}}catch(e){}</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Yupavideo">
@@ -20,7 +21,24 @@
 :root{
   --tinta:#0C1A2E;--turq:#2ED3B7;--ambar:#F2A93B;--gris:#9BB0C9;--claro:#F4F7FA;
   --bg:#0C1A2E;--panel:#12243C;--panel2:#183050;--borde:#24405F;--txt:#F4F7FA;--sub:#9BB0C9;--rojo:#EF5350;
+  --campo:#0A1626;--campo2:#0F2036;--fuerte:#fff;--linea:rgba(255,255,255,.07);--vidrio:rgba(12,26,46,.82);
+  --turq-t:#2ED3B7;--rojo-t:var(--rojo-t);--ambar-t:#F2A93B;--hov:#1f3a5e;
+  color-scheme:dark;
 }
+/* Tema claro (opcional): el oscuro es el de siempre. Las pantallas de video (cámara del celular, escáner,
+   miniaturas y programa) se quedan oscuras en los dos temas, porque son imagen. */
+:root[data-tema="claro"]{
+  --bg:#F4F7FA;--panel:#FFFFFF;--panel2:#EDF2F7;--borde:#D5DFEA;--txt:#0C1A2E;--sub:#5A7086;--gris:#5A7086;--claro:#0C1A2E;
+  --campo:#FFFFFF;--campo2:#F3F7FB;--fuerte:#0C1A2E;--linea:rgba(12,26,46,.09);--vidrio:rgba(255,255,255,.86);
+  --turq-t:#0B7F6D;--rojo-t:#B3261E;--ambar-t:#A86A00;--hov:#E3EBF3;
+  color-scheme:light;
+}
+#camara,#escaner,.camCard,#progBox,.tag,#cortePC{--txt:#F4F7FA;--sub:#9BB0C9;--panel:#12243C;--panel2:#183050;--borde:#24405F;--campo:#0A1626;--fuerte:#fff;color:#F4F7FA}
+:root[data-tema="claro"] .logoNav svg [stroke="#FFFFFF"]{stroke:#0C1A2E}
+:root[data-tema="claro"] .ini-fondo{background:radial-gradient(1100px 600px at 80% -10%,rgba(46,211,183,.20),transparent 60%),radial-gradient(900px 600px at -10% 110%,rgba(242,169,59,.14),transparent 60%)}
+:root[data-tema="claro"] .pn.hero::before{opacity:.2}
+[data-a="tema"]{display:inline-flex;align-items:center;justify-content:center;padding:8px 10px}
+[data-a="tema"] svg{width:18px;height:18px;display:block}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family:'Sora',system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
@@ -29,25 +47,25 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font-family
 h1{font-size:26px;margin:0;font-weight:700;letter-spacing:-.3px}
 h2{font-size:17px;margin:0;font-weight:600}
 p{color:var(--sub);margin:0;line-height:1.5}
-a{color:var(--turq)}
+a{color:var(--turq-t)}
 .marca{display:flex;align-items:center;gap:12px}
 .marca small{display:block;color:var(--sub);font-size:12px;font-family:'IBM Plex Mono',monospace;letter-spacing:.5px}
 .tarjeta{background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px}
 button,select{font:inherit;font-weight:600;border:0;border-radius:10px;padding:12px 16px;cursor:pointer;background:var(--turq);color:var(--tinta)}
-select{background:#0A1626;border:1px solid var(--borde);color:var(--txt);font-weight:400}
+select{background:var(--campo);border:1px solid var(--borde);color:var(--txt);font-weight:400}
 button.sec{background:var(--panel2);color:var(--txt);border:1px solid var(--borde)}
 button.rojo{background:var(--rojo);color:#fff}
 button.ambar{background:var(--ambar);color:var(--tinta)}
 button:disabled{opacity:.45;cursor:not-allowed}
-input{font:inherit;padding:12px;border-radius:10px;border:1px solid var(--borde);background:#0A1626;color:var(--txt);width:100%}
+input{font:inherit;padding:12px;border-radius:10px;border:1px solid var(--borde);background:var(--campo);color:var(--txt);width:100%}
 input.codigoIn{font-family:'IBM Plex Mono',monospace;font-size:22px;letter-spacing:3px;text-transform:uppercase;text-align:center}
 label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px}
 .estado{font-size:13px;color:var(--sub);font-family:'IBM Plex Mono',monospace}
 .punto{display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--sub);margin-right:6px;vertical-align:middle}
 .punto.vivo{background:var(--turq)}.punto.malo{background:var(--ambar)}.punto.rec{background:var(--rojo);animation:lat 1s infinite}.punto.pausa{background:var(--ambar)}
 @keyframes lat{50%{opacity:.3}}
-.error{color:#FFB4A9;font-size:14px}
-.ok{color:var(--turq);font-size:14px}
+.error{color:var(--rojo-t);font-size:14px}
+.ok{color:var(--turq-t);font-size:14px}
 .fila{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .pie{text-align:center;font-size:12px;color:var(--sub);font-family:'IBM Plex Mono',monospace}
 .chip{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:3px 8px;border-radius:6px;background:var(--panel2);color:var(--sub)}
@@ -61,20 +79,20 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 #inicio{position:relative;min-height:100%;background:var(--bg);overflow-x:hidden}
 .ini-fondo{position:fixed;inset:0;pointer-events:none;background:radial-gradient(1100px 600px at 80% -10%,rgba(46,211,183,.16),transparent 60%),radial-gradient(900px 600px at -10% 110%,rgba(242,169,59,.10),transparent 60%)}
 .ini-rej{position:absolute;right:-60px;bottom:-60px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;width:min(520px,80vw);opacity:.5;transform:rotate(-8deg)}
-.ini-rej i{aspect-ratio:1;border-radius:22%;border:2px solid rgba(255,255,255,.08)}
+.ini-rej i{aspect-ratio:1;border-radius:22%;border:2px solid var(--linea)}
 .ini-rej i.on{background:rgba(46,211,183,.16);border-color:rgba(46,211,183,.35);animation:iniEnc 5.6s ease-in-out infinite both}
 .ini-rej i.top{background:rgba(242,169,59,.22);border-color:rgba(242,169,59,.5)}
 @keyframes iniEnc{0%,100%{opacity:.35}12%,70%{opacity:1}}
 @media (prefers-reduced-motion:reduce){.ini-rej i.on{animation:none}}
-.ini-barra{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;padding:12px 22px;background:rgba(12,26,46,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.07)}
+.ini-barra{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;padding:12px 22px;background:var(--vidrio);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--linea)}
 .ini-nombre{font-weight:700;font-size:17px;padding-left:14px;border-left:1px solid var(--borde)}
 .ini-esp{flex:1}
 .ini-quien{text-align:right;font-size:13px;color:var(--sub);line-height:1.35}
-.ini-quien b{display:block;color:#fff;font-weight:600}
+.ini-quien b{display:block;color:var(--fuerte);font-weight:600}
 .ini-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:10px;background:var(--panel2);border:1px solid var(--borde);color:var(--txt);font-weight:600;font-size:13.5px;text-decoration:none;cursor:pointer}
-.ini-btn:hover{background:#1f3a5e}
+.ini-btn:hover{background:var(--hov)}
 .ini-main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:38px 22px 20px;display:flex;flex-direction:column;gap:18px}
-.ini-saludo .rot{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--turq);text-transform:uppercase}
+.ini-saludo .rot{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--turq-t);text-transform:uppercase}
 .ini-saludo h1{font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:-.02em;margin:8px 0}
 .ini-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;margin-top:20px}
 .pn{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--borde);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:12px}
@@ -88,11 +106,11 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 .b-gran:hover{transform:translateY(-1px);box-shadow:0 14px 36px rgba(46,211,183,.4)}
 .pasos{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px;counter-reset:p}
 .pasos li{display:flex;gap:12px;color:var(--sub);font-size:14px;line-height:1.5;counter-increment:p}
-.pasos li::before{content:counter(p);flex:none;width:26px;height:26px;border-radius:8px;background:rgba(46,211,183,.14);border:1px solid rgba(46,211,183,.4);color:var(--turq);display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px}
+.pasos li::before{content:counter(p);flex:none;width:26px;height:26px;border-radius:8px;background:rgba(46,211,183,.14);border:1px solid rgba(46,211,183,.4);color:var(--turq-t);display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px}
 .incl{display:grid;grid-template-columns:1fr 1fr;gap:9px 14px;margin:0;padding:0;list-style:none;font-size:13.5px;color:var(--sub)}
-.incl li::before{content:"✓ ";color:var(--turq);font-weight:700}
+.incl li::before{content:"✓ ";color:var(--turq-t);font-weight:700}
 .ini-centro{max-width:440px;width:100%;margin:5vh auto 0}
-.aviso{color:var(--ambar);font-size:14px}
+.aviso{color:var(--ambar-t);font-size:14px}
 .giroIni{width:34px;height:34px;border-radius:50%;border:3px solid var(--borde);border-top-color:var(--turq);animation:giraIni .8s linear infinite}
 @keyframes giraIni{to{transform:rotate(360deg)}}
 @media (max-width:900px){
@@ -105,8 +123,8 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 }
 .b-sec{background:#E3EAF2;color:var(--tinta);padding:10px 14px}
 .link-cel{background:transparent;color:var(--gris);font-weight:500;font-size:14px;text-decoration:underline;text-underline-offset:3px;padding:6px;align-self:center}
-.link-cel:hover{color:var(--claro)}
-#errLogos{color:#FFB4A9;font-size:13px}
+.link-cel:hover{color:var(--fuerte)}
+#errLogos{color:var(--rojo-t);font-size:13px}
 #escaner{position:fixed;inset:0;background:#000;z-index:50}
 #vidEsc{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .esc-marco{position:absolute;left:50%;top:45%;width:min(70vw,300px);aspect-ratio:1;transform:translate(-50%,-50%);border:3px solid var(--turq);border-radius:18px;box-shadow:0 0 0 2000px #0C1A2E99}
@@ -121,7 +139,7 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 #progBox{position:relative;flex:1;min-width:0;background:#000;display:flex;align-items:center;justify-content:center}
 #tira{width:240px;flex:none;background:var(--panel);border-left:1px solid var(--borde);display:flex;flex-direction:column;gap:10px;padding:10px;overflow:auto}
 @media (max-width:900px){ #monitor .zona{flex-direction:column} #tira{width:auto;flex-direction:row;border-left:0;border-top:1px solid var(--borde);overflow-x:auto} .camCard,.camAgregar{width:190px;flex:none} }
-.camCard{background:#0A1626;border:2px solid var(--borde);border-radius:10px;overflow:hidden;cursor:pointer;position:relative;flex:none}
+.camCard{background:var(--campo);border:2px solid var(--borde);border-radius:10px;overflow:hidden;cursor:pointer;position:relative;flex:none}
 .camCard:hover{border-color:var(--gris)}
 .camCard.envivo{border-color:var(--rojo);box-shadow:0 0 0 2px var(--rojo)}
 .camCard.cortada video{opacity:.35}
@@ -135,7 +153,7 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 .selAudio select{padding:9px 10px}
 #avisoPC{position:absolute;top:56px;left:50%;transform:translateX(-50%);background:var(--ambar);color:var(--tinta);font-weight:700;padding:8px 14px;border-radius:10px;z-index:6;font-size:14px;max-width:90%;text-align:center}
 .lista-tx{display:flex;flex-direction:column;gap:8px}
-.tx-item{border:2px solid var(--borde);border-radius:10px;padding:8px 10px;display:flex;gap:8px;align-items:center;justify-content:space-between;background:#0F2036}
+.tx-item{border:2px solid var(--borde);border-radius:10px;padding:8px 10px;display:flex;gap:8px;align-items:center;justify-content:space-between;background:var(--campo2)}
 .tx-item.activo{border-color:var(--turq)}
 .tx-item div{min-width:0}
 .tx-item b{display:block;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -232,6 +250,7 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
     <span class="ini-nombre">Yupavideo</span>
     <span class="ini-esp"></span>
     <div class="ini-quien" id="iniQuien" hidden><b id="iniUser"></b><span id="iniOrg"></span></div>
+    <button class="ini-btn" data-a="tema" id="bTemaIni" title="Cambiar tema" aria-label="Cambiar tema"></button>
     <a id="linkAdmin" class="ini-btn" href="../portal/?menu=1" hidden>← Portal</a>
     <button id="bSalirIni" class="ini-btn" onclick="cerrarSesion()" hidden>Salir</button>
   </header>
@@ -350,6 +369,7 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
       <button class="sec" id="bSalida" onclick="abrirSalida()" title="Ventana solo con lo que sale en vivo, para la pantalla LED o el proyector">🖥 Salida limpia</button>
       <button class="sec" id="bTextos" onclick="abrirPanelTextos()">✎ Textos</button>
       <button class="sec" id="bLogo" onclick="abrirPanelLogo()">🏷 Logo: ninguno</button>
+      <button class="sec" data-a="tema" id="bTemaMon" title="Cambiar tema" aria-label="Cambiar tema"></button>
       <button class="sec" onclick="history.back()">✕ Salir</button>
     </div>
   </div>
@@ -627,6 +647,23 @@ function pintarInicio(){
   }
   g.innerHTML = h;
 })();
+
+/* ---------- Tema claro / oscuro (se recuerda en este equipo y lo comparte el portal) ---------- */
+const SOL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const LUNA = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>';
+const temaActual = () => document.documentElement.getAttribute('data-tema') === 'claro' ? 'claro' : 'oscuro';
+function pintarBotonTema(){
+  const claro = temaActual() === 'claro';
+  document.querySelectorAll('[data-a="tema"]').forEach(b => { b.innerHTML = claro ? LUNA : SOL; b.title = claro ? 'Cambiar a tema oscuro' : 'Cambiar a tema claro'; b.setAttribute('aria-label', b.title); });
+  const m = document.querySelector('meta[name=theme-color]'); if (m) m.content = claro ? '#F4F7FA' : '#0C1A2E';
+}
+function alternarTema(){
+  const nuevo = temaActual() === 'claro' ? 'oscuro' : 'claro';
+  if (nuevo === 'claro') document.documentElement.setAttribute('data-tema', 'claro'); else document.documentElement.removeAttribute('data-tema');
+  grabarLS('yp_tema', nuevo); pintarBotonTema();
+}
+document.addEventListener('click', e => { if (e.target.closest('[data-a="tema"]')) alternarTema(); });
+pintarBotonTema();
 function escapar(t){ return String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 /* Botón "atrás": sale de la cámara/pantalla, no de la página */
