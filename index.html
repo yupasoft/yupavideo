@@ -56,30 +56,52 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 .logoNav{display:flex;align-items:center}
 .logoNav svg{height:26px;width:auto;display:block}
 .sepNav{width:1px;height:22px;background:var(--borde)}
-#slotLogin svg{height:46px}
-/* Pantalla de acceso */
-#inicio{min-height:100%;background:radial-gradient(1200px 600px at 50% -10%, #17304F 0%, var(--tinta) 60%)}
-#inicio .centro{min-height:100vh;justify-content:center;padding-top:32px}
-.acceso{background:var(--claro);color:var(--tinta);border-radius:16px;overflow:hidden;box-shadow:0 18px 50px #0007;width:100%;max-width:400px;margin:0 auto}
-.acceso-cab{background:#0F2036;border-bottom:3px solid var(--turq);padding:26px 20px 22px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
-.acceso-titulo{font-size:28px;font-weight:700;color:var(--claro);letter-spacing:-.3px}
-.acceso-sub{font-size:13px;color:var(--gris)}
-.acceso-cuerpo{padding:22px 20px 24px;display:flex;flex-direction:column;gap:14px}
-.acceso label{color:#3B4E68;font-size:13px;font-weight:600}
-.acceso p{color:#4A5D78}
-.acceso b{color:var(--tinta)}
-.acceso input,.acceso select{background:#fff;border:1px solid #CFDAE6;color:var(--tinta)}
-.acceso input:focus,.acceso select:focus{outline:2px solid var(--turq);outline-offset:0;border-color:var(--turq)}
-.acceso .clave{position:relative}
-.acceso .clave input{padding-right:46px}
-.acceso .ojo{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:transparent;color:#6B7F99;padding:6px 8px;font-size:16px}
-.b-ingresar{background:var(--tinta);color:var(--claro);padding:13px 16px;display:flex;align-items:center;justify-content:center;gap:8px}
-.b-ingresar:hover{background:#163055}
+#slotLogin svg{height:34px}
+/* Pantalla de inicio (mismo estilo que el portal Yupasoft) */
+#inicio{position:relative;min-height:100%;background:var(--bg);overflow-x:hidden}
+.ini-fondo{position:fixed;inset:0;pointer-events:none;background:radial-gradient(1100px 600px at 80% -10%,rgba(46,211,183,.16),transparent 60%),radial-gradient(900px 600px at -10% 110%,rgba(242,169,59,.10),transparent 60%)}
+.ini-rej{position:absolute;right:-60px;bottom:-60px;display:grid;grid-template-columns:repeat(4,1fr);gap:22px;width:min(520px,80vw);opacity:.5;transform:rotate(-8deg)}
+.ini-rej i{aspect-ratio:1;border-radius:22%;border:2px solid rgba(255,255,255,.08)}
+.ini-rej i.on{background:rgba(46,211,183,.16);border-color:rgba(46,211,183,.35);animation:iniEnc 5.6s ease-in-out infinite both}
+.ini-rej i.top{background:rgba(242,169,59,.22);border-color:rgba(242,169,59,.5)}
+@keyframes iniEnc{0%,100%{opacity:.35}12%,70%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.ini-rej i.on{animation:none}}
+.ini-barra{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:14px;padding:12px 22px;background:rgba(12,26,46,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.07)}
+.ini-nombre{font-weight:700;font-size:17px;padding-left:14px;border-left:1px solid var(--borde)}
+.ini-esp{flex:1}
+.ini-quien{text-align:right;font-size:13px;color:var(--sub);line-height:1.35}
+.ini-quien b{display:block;color:#fff;font-weight:600}
+.ini-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:10px;background:var(--panel2);border:1px solid var(--borde);color:var(--txt);font-weight:600;font-size:13.5px;text-decoration:none;cursor:pointer}
+.ini-btn:hover{background:#1f3a5e}
+.ini-main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:38px 22px 20px;display:flex;flex-direction:column;gap:18px}
+.ini-saludo .rot{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--turq);text-transform:uppercase}
+.ini-saludo h1{font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:-.02em;margin:8px 0}
+.ini-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;margin-top:20px}
+.pn{background:linear-gradient(160deg,var(--panel2),var(--panel));border:1px solid var(--borde);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:12px}
+.pn h2,.pn h3{margin:0;font-size:16px;font-weight:700}
+.pn.hero{grid-row:span 2;position:relative;overflow:hidden;min-height:320px;justify-content:center;gap:14px}
+.pn.hero::before{content:"";position:absolute;inset:-35% -25% auto auto;width:300px;height:300px;border-radius:50%;background:var(--turq);opacity:.14;filter:blur(46px)}
+.pn.hero>*{position:relative}
+.pn.hero h3{font-size:28px;letter-spacing:-.01em}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.b-gran{display:flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(90deg,var(--turq),#5CE0C4);color:var(--tinta);border:0;border-radius:14px;padding:18px 22px;font-size:17px;font-weight:800;box-shadow:0 10px 30px rgba(46,211,183,.28);text-decoration:none;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.b-gran:hover{transform:translateY(-1px);box-shadow:0 14px 36px rgba(46,211,183,.4)}
+.pasos{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:12px;counter-reset:p}
+.pasos li{display:flex;gap:12px;color:var(--sub);font-size:14px;line-height:1.5;counter-increment:p}
+.pasos li::before{content:counter(p);flex:none;width:26px;height:26px;border-radius:8px;background:rgba(46,211,183,.14);border:1px solid rgba(46,211,183,.4);color:var(--turq);display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px}
+.incl{display:grid;grid-template-columns:1fr 1fr;gap:9px 14px;margin:0;padding:0;list-style:none;font-size:13.5px;color:var(--sub)}
+.incl li::before{content:"✓ ";color:var(--turq);font-weight:700}
+.ini-centro{max-width:440px;width:100%;margin:5vh auto 0}
+.aviso{color:var(--ambar);font-size:14px}
+@media (max-width:900px){
+  .ini-grid{grid-template-columns:1fr}
+  .pn.hero{grid-row:auto;min-height:0}
+  .ini-main{padding:22px 16px 10px}
+  .ini-quien,.ini-nombre{display:none}
+  .incl{grid-template-columns:1fr}
+  .ini-barra{padding:10px 14px}
+}
 .b-sec{background:#E3EAF2;color:var(--tinta);padding:10px 14px}
-.acceso .error{color:#B3261E}
-.acceso a{color:#0E8F7A;font-weight:600;font-size:14px}
-.acceso .chip{background:#E3EAF2;color:#3B4E68}
-.acceso .chip.ok{background:var(--turq);color:var(--tinta)}.acceso .chip.mal{background:var(--ambar);color:var(--tinta)}
 .link-cel{background:transparent;color:var(--gris);font-weight:500;font-size:14px;text-decoration:underline;text-underline-offset:3px;padding:6px;align-self:center}
 .link-cel:hover{color:var(--claro)}
 #errLogos{color:#FFB4A9;font-size:13px}
@@ -186,10 +208,9 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
 <!-- ============ INICIO ============ -->
 <div id="cintaComo" hidden style="position:fixed;top:0;left:50%;transform:translateX(-50%);z-index:99999;background:#F2A93B;color:#0C1A2E;font-weight:700;font-size:13px;padding:5px 16px;border-radius:0 0 12px 12px;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.35)"></div>
 <section id="inicio" class="pantalla">
-  <div class="centro">
-    <div class="acceso">
-      <div class="acceso-cab">
-        <span class="logoNav" id="slotLogin"><svg viewBox="0 0 101 101" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Yupavideo"><style>
+  <div class="ini-fondo" aria-hidden="true"><div class="ini-rej" id="iniRej"></div></div>
+  <header class="ini-barra">
+    <span class="logoNav" id="slotLogin"><svg viewBox="0 0 101 101" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Yupavideo"><style>
 .ycnv{transform-box:fill-box;transform-origin:center}
 .yvnv{opacity:.3}
 .yfnv{animation:ycnva 5.6s cubic-bezier(.3,1.4,.5,1) infinite both}
@@ -206,55 +227,86 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
   .yfnv,.ywnv{animation:none}
 }
 </style><rect class="ycnv yvnv" x="1.6" y="1.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yvnv" x="1.6" y="28.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yvnv" x="1.6" y="55.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yfnv" x="0" y="81" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.000s"/><rect class="ycnv yvnv" x="28.6" y="1.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yvnv" x="28.6" y="28.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yfnv" x="27" y="54" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.120s"/><rect class="ycnv yfnv" x="27" y="81" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.060s"/><rect class="ycnv yvnv" x="55.6" y="1.6" width="16.8" height="16.8" rx="4.5" fill="none" stroke="#FFFFFF" stroke-width="3.2"/><rect class="ycnv yfnv" x="54" y="27" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.300s"/><rect class="ycnv yfnv" x="54" y="54" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.240s"/><rect class="ycnv yfnv" x="54" y="81" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.180s"/><rect class="ycnv yfnv" x="81" y="0" width="20" height="20" rx="5.5" fill="#F2A93B" style="animation-delay:0.540s"/><rect class="ycnv yfnv" x="81" y="27" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.480s"/><rect class="ycnv yfnv" x="81" y="54" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.420s"/><rect class="ycnv yfnv" x="81" y="81" width="20" height="20" rx="5.5" fill="#2ED3B7" style="animation-delay:0.360s"/></svg></span>
-        <div class="acceso-titulo">Yupavideo</div>
-        <div class="acceso-sub" id="accesoSub">Entra con tu cuenta Yupasoft</div>
-      </div>
+    <span class="ini-nombre">Yupavideo</span>
+    <span class="ini-esp"></span>
+    <div class="ini-quien" id="iniQuien" hidden><b id="iniUser"></b><span id="iniOrg"></span></div>
+    <a id="linkAdmin" class="ini-btn" href="../portal/?menu=1" hidden>← Portal</a>
+    <button id="bSalirIni" class="ini-btn" onclick="cerrarSesion()" hidden>Salir</button>
+  </header>
 
-      <!-- Laptop: el ingreso es en el portal Yupasoft -->
-      <div class="acceso-cuerpo" id="tarjetaLogin">
-        <p style="margin:0 0 4px">Ingresa con tu usuario de <b>Yupasoft</b>.</p>
-        <a id="bPortal" class="b-ingresar" href="../portal/?volver=yupavideo" style="display:block;text-align:center;text-decoration:none">→ Ingresar con mi cuenta</a>
-        <div class="error" id="logError"></div>
-      </div>
+  <main class="ini-main">
+    <!-- Laptop sin sesión: el ingreso es en el portal Yupasoft -->
+    <div class="pn ini-centro" id="tarjetaLogin">
+      <h2 style="font-size:21px">Entra con tu cuenta Yupasoft</h2>
+      <p>Tu usuario y contraseña son los del portal de Yupasoft.</p>
+      <a id="bPortal" class="b-gran" href="../portal/?volver=yupavideo">→ Ingresar con mi cuenta</a>
+      <div class="error" id="logError"></div>
+    </div>
 
-      <!-- Laptop: sesión iniciada -->
-      <div class="acceso-cuerpo" id="tarjetaSesion" hidden>
-        <div id="infoSesion"></div>
-        <button id="bAbrirPantalla" class="b-ingresar" onclick="iniciarMonitor()">▶ Abrir pantalla de transmisión</button>
-        <div class="fila" style="justify-content:space-between">
-          <button class="b-sec" onclick="cerrarSesion()">Cerrar sesión</button>
-          <a id="linkAdmin" href="../portal/?menu=1" hidden>← Portal Yupasoft</a>
+    <!-- Laptop con sesión -->
+    <div id="tarjetaSesion" hidden>
+      <div class="ini-saludo">
+        <div class="rot" id="iniRot"></div>
+        <h1 id="iniTitulo"></h1>
+        <p id="iniSub"></p>
+      </div>
+      <div class="ini-grid">
+        <div class="pn hero">
+          <div class="chips" id="iniLic"></div>
+          <h3>Transmisión en vivo</h3>
+          <p>Abre la pantalla de control: ahí conectas los celulares como cámaras, eliges cuál sale al aire y grabas el programa.</p>
+          <button id="bAbrirPantalla" class="b-gran" onclick="iniciarMonitor()">▶ Abrir pantalla de transmisión</button>
+          <p id="iniAviso" class="aviso" hidden></p>
+        </div>
+        <div class="pn">
+          <h3>Cómo se usa</h3>
+          <ol class="pasos">
+            <li><span>Abre la pantalla de transmisión en esta laptop. Aparece un código QR.</span></li>
+            <li><span>En cada celular abre esta misma página, toca <b>¿Eres el celular-cámara?</b> y escanea el QR.</span></li>
+            <li><span>Elige qué cámara sale al aire (teclas 1, 2 o 3) y graba el programa.</span></li>
+          </ol>
+        </div>
+        <div class="pn">
+          <h3>Lo que incluye</h3>
+          <ul class="incl">
+            <li>Hasta 3 cámaras</li>
+            <li>Logo sobre el video</li>
+            <li>Horizontal o vertical</li>
+            <li>Pausa en vivo</li>
+            <li>Grabación por partes</li>
+            <li>Reconexión automática</li>
+          </ul>
+          <p style="font-size:13px">Recomendado en la laptop: Google Chrome o Microsoft Edge.</p>
+        </div>
+        <div class="pn" id="tarjetaInstalar" hidden>
+          <h3>⬇ Instalar la app</h3>
+          <p id="textoInstalar">Instálala para abrirla desde un ícono, como cualquier aplicación.</p>
+          <button id="bInstalar" onclick="instalar()" hidden>Instalar</button>
         </div>
       </div>
+    </div>
 
-      <!-- Celular -->
-      <div class="acceso-cuerpo" id="tarjetaCel" hidden>
-        <p id="textoCel">Escanea el QR que aparece en la laptop, o escribe su código.</p>
-        <button id="bEscanear" class="b-ingresar" style="background:var(--turq);color:var(--tinta)" onclick="abrirEscaner()">📷 Escanear el QR de la laptop</button>
-        <p id="oEscribe" style="text-align:center;font-size:13px;margin:-4px 0">o escribe el código</p>
-        <input id="codIn" class="codigoIn" maxlength="9" placeholder="XXXX-XXXX" autocomplete="off">
-        <label>Calidad de transmisión
-          <select id="calSel">
-            <option value="720" selected>Estable · 720p (recomendada para eventos largos)</option>
-            <option value="1080">Alta · 1080p (necesita muy buena señal)</option>
-          </select>
-        </label>
-        <button id="bCamara" class="b-ingresar" onclick="iniciarCamara()">Usar como cámara</button>
-        <div class="error" id="celError"></div>
-      </div>
+    <!-- Celular-cámara (no necesita ingresar) -->
+    <div class="pn ini-centro" id="tarjetaCel" hidden>
+      <h2 style="font-size:21px">Conecta este celular como cámara</h2>
+      <p id="textoCel">Escanea el QR que aparece en la laptop, o escribe su código.</p>
+      <button id="bEscanear" class="b-gran" onclick="abrirEscaner()">📷 Escanear el QR de la laptop</button>
+      <p id="oEscribe" style="text-align:center;font-size:13px;margin:-2px 0">o escribe el código</p>
+      <input id="codIn" class="codigoIn" maxlength="9" placeholder="XXXX-XXXX" autocomplete="off">
+      <label>Calidad de transmisión
+        <select id="calSel">
+          <option value="720" selected>Estable · 720p (recomendada para eventos largos)</option>
+          <option value="1080">Alta · 1080p (necesita muy buena señal)</option>
+        </select>
+      </label>
+      <button id="bCamara" class="b-gran" style="background:var(--panel2);color:var(--txt);box-shadow:none;border:1px solid var(--borde)" onclick="iniciarCamara()">Usar como cámara</button>
+      <div class="error" id="celError"></div>
     </div>
 
     <button class="link-cel" id="linkCel" onclick="modoCelular(true)">📱 ¿Eres el celular-cámara? Ingresa el código</button>
-    <button class="link-cel" id="linkLogin" onclick="modoCelular(false)" hidden>💻 Volver al inicio de sesión</button>
-
-    <div class="tarjeta" id="tarjetaInstalar" hidden>
-      <h2>⬇ Instalar la app</h2>
-      <p id="textoInstalar">Instálala para abrirla desde un ícono, como cualquier aplicación.</p>
-      <button id="bInstalar" onclick="instalar()" hidden>Instalar</button>
-    </div>
-
-    <div class="pie">Yupavideo · <a href="https://yupasoft.github.io" target="_blank" rel="noopener">Yupasoft</a> · software a medida</div>
-  </div>
+    <button class="link-cel" id="linkLogin" onclick="modoCelular(false)" hidden>💻 Volver al inicio</button>
+  </main>
+  <div class="pie" style="position:relative;z-index:1;padding:8px 0 28px">Yupavideo · <a href="https://yupasoft.github.io" target="_blank" rel="noopener">Yupasoft</a> · software a medida</div>
 </section>
 
 <!-- ============ ESCÁNER DE QR (celular) ============ -->
@@ -527,30 +579,45 @@ function modoCelular(on){
   $('#tarjetaCel').hidden = !on;
   $('#linkCel').hidden = on;
   $('#linkLogin').hidden = !on;
-  $('#accesoSub').textContent = on ? 'Conecta este celular como cámara' : (ses && ctx ? 'Sesión iniciada' : 'Entra con tu cuenta Yupasoft');
   pintarInicio();
 }
 function pintarInicio(){
   const conSesion = !!(ses && ctx);
   $('#tarjetaLogin').hidden = modoCel || conSesion;
   $('#tarjetaSesion').hidden = modoCel || !conSesion;
-  if (!modoCel) $('#accesoSub').textContent = conSesion ? 'Sesión iniciada' : 'Entra con tu cuenta Yupasoft';
-  if (!conSesion) return;
+  $('#iniQuien').hidden = !conSesion; $('#linkAdmin').hidden = !conSesion; $('#bSalirIni').hidden = !conSesion;
+  if (!conSesion){ $('#cintaComo').hidden = true; return; }
   const tieneEmpresa = !!ctx.empresa_id;
-  let html = `<p><b>${ctx.empresa ? escapar(ctx.empresa) : 'Sin organización asignada'}</b><br><span class="mono" style="font-size:13px">${escapar(ctx.usuario || ctx.email || '')}</span></p>`;
+  const vigente = tieneEmpresa && ctx.vigente;
+  $('#iniUser').textContent = ctx.usuario || ctx.email || '';
+  $('#iniOrg').textContent = ctx.empresa || 'Sin organización asignada';
+  $('#iniRot').textContent = ctx.empresa || 'Yupavideo';
+  $('#iniTitulo').textContent = vigente ? 'Todo listo para transmitir' : (tieneEmpresa ? 'Tu licencia necesita atención' : 'Falta asignar tu organización');
+  $('#iniSub').textContent = vigente ? 'Abre la pantalla de transmisión para conectar tus cámaras.' : 'Por ahora no puedes abrir la pantalla de transmisión.';
+  let chips = '', aviso = '';
   if (tieneEmpresa){
-    html += ctx.vigente
-      ? `<p><span class="chip ok">Licencia vigente</span> <span class="mono" style="font-size:13px">${ctx.vence_el ? 'hasta el ' + fechaBonita(ctx.vence_el) : 'sin vencimiento'}</span></p>`
-      : `<p><span class="chip mal">Licencia ${ctx.activa ? 'vencida' : 'inactiva'}</span> <span class="mono" style="font-size:13px">${ctx.activa ? 'venció el ' + fechaBonita(ctx.vence_el) : ''}</span></p><p>Para renovarla, escribe a Yupasoft.</p>`;
+    chips = vigente
+      ? `<span class="chip ok">Licencia vigente</span><span class="chip">${ctx.vence_el ? 'hasta el ' + fechaBonita(ctx.vence_el) : 'sin vencimiento'}</span>`
+      : `<span class="chip mal">Licencia ${ctx.activa ? 'vencida' : 'inactiva'}</span>${ctx.activa && ctx.vence_el ? `<span class="chip">venció el ${fechaBonita(ctx.vence_el)}</span>` : ''}`;
+    if (!vigente) aviso = 'Para renovarla, escribe a Yupasoft por WhatsApp: +51 967 292 374.';
   } else {
-    html += `<p>Tu usuario aún no está asignado a una organización. Escribe a Yupasoft.</p>`;
+    aviso = 'Tu usuario aún no está asignado a una organización. Escribe a Yupasoft: +51 967 292 374.';
   }
-  $('#infoSesion').innerHTML = html;
-  $('#bAbrirPantalla').hidden = !(tieneEmpresa && ctx.vigente);
-  $('#linkAdmin').hidden = false;
+  $('#iniLic').innerHTML = chips;
+  $('#iniAviso').textContent = aviso; $('#iniAviso').hidden = !aviso;
+  $('#bAbrirPantalla').hidden = !vigente;
   $('#cintaComo').hidden = !ctx.como;
   if (ctx.como) $('#cintaComo').textContent = 'Viendo como ' + (ctx.empresa || '') + ' · modo administrador';
 }
+(function(){
+  const g = document.getElementById('iniRej'); if (!g) return;
+  const on = [[3,0],[2,1],[3,1],[1,2],[2,2],[3,2],[0,3],[1,3],[2,3],[3,3]]; let h = '';
+  for (let f = 0; f < 4; f++) for (let c = 0; c < 4; c++){
+    const i = on.findIndex(q => q[0] === c && q[1] === f);
+    h += `<i class="${i >= 0 ? 'on' : ''}${c === 3 && f === 0 ? ' top' : ''}" style="animation-delay:${(i >= 0 ? i : 0) * .18}s"></i>`;
+  }
+  g.innerHTML = h;
+})();
 function escapar(t){ return String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
 /* Botón "atrás": sale de la cámara/pantalla, no de la página */
