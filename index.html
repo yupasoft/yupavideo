@@ -93,6 +93,8 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 .incl li::before{content:"✓ ";color:var(--turq);font-weight:700}
 .ini-centro{max-width:440px;width:100%;margin:5vh auto 0}
 .aviso{color:var(--ambar);font-size:14px}
+.giroIni{width:34px;height:34px;border-radius:50%;border:3px solid var(--borde);border-top-color:var(--turq);animation:giraIni .8s linear infinite}
+@keyframes giraIni{to{transform:rotate(360deg)}}
 @media (max-width:900px){
   .ini-grid{grid-template-columns:1fr}
   .pn.hero{grid-row:auto;min-height:0}
@@ -235,8 +237,13 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
   </header>
 
   <main class="ini-main">
+    <!-- Mientras se confirma la sesión (evita el parpadeo de "Ingresar con mi cuenta") -->
+    <div class="pn ini-centro" id="tarjetaCarga" style="align-items:center;text-align:center;gap:16px;padding:36px 22px">
+      <div class="giroIni"></div><p>Entrando a Yupavideo…</p>
+    </div>
+
     <!-- Laptop sin sesión: el ingreso es en el portal Yupasoft -->
-    <div class="pn ini-centro" id="tarjetaLogin">
+    <div class="pn ini-centro" id="tarjetaLogin" hidden>
       <h2 style="font-size:21px">Entra con tu cuenta Yupasoft</h2>
       <p>Tu usuario y contraseña son los del portal de Yupasoft.</p>
       <a id="bPortal" class="b-gran" href="../portal/?volver=yupavideo">→ Ingresar con mi cuenta</a>
@@ -558,7 +565,7 @@ async function cerrarSesion(){
 }
 
 /* ---------- Pantalla de inicio ---------- */
-let ctx = null;
+let ctx = null, ctxFallo = false;
 /* "Ver como": el administrador abre la app con ?como=<id de organización>. La base solo lo permite a superadmins. */
 const COMO = (() => { const v = new URLSearchParams(location.search).get('como'); return /^[0-9a-f-]{36}$/i.test(v || '') ? v : null; })();
 const esLaptop = () => !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) && !(navigator.maxTouchPoints > 1 && /Macintosh/.test(navigator.userAgent));
@@ -570,7 +577,7 @@ async function cargarContexto(){
     return;
   }
   try{ ctx = await rpc('yv_mi_contexto', COMO ? {p_como: COMO} : {}); }
-  catch(e){ if (!ses) ctx = null; else { $('#logError').textContent = 'Sin conexión con el servidor. Revisa internet.'; } }
+  catch(e){ if (!ses) ctx = null; else { ctxFallo = true; $('#logError').textContent = 'Sin conexión con el servidor. Revisa internet.'; } }
   pintarInicio();
 }
 let modoCel = false;
@@ -583,7 +590,9 @@ function modoCelular(on){
 }
 function pintarInicio(){
   const conSesion = !!(ses && ctx);
-  $('#tarjetaLogin').hidden = modoCel || conSesion;
+  const cargando = (!!ses && !ctx && !ctxFallo) || (!ses && esLaptop() && !modoCel);  // en laptop sin sesión se va directo al portal
+  $('#tarjetaCarga').hidden = modoCel || !cargando;
+  $('#tarjetaLogin').hidden = modoCel || conSesion || cargando;
   $('#tarjetaSesion').hidden = modoCel || !conSesion;
   $('#iniQuien').hidden = !conSesion; $('#linkAdmin').hidden = !conSesion; $('#bSalirIni').hidden = !conSesion;
   if (!conSesion){ $('#cintaComo').hidden = true; return; }
