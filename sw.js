@@ -1,7 +1,7 @@
 // Yupavideo · service worker (Yupasoft)
 // Siempre intenta traer la versión nueva de internet; si no hay conexión, usa la guardada.
 // Las llamadas a Supabase y las conexiones de video NO pasan por aquí.
-const CACHE = 'yupavideo-v20';
+const CACHE = 'yupavideo-v21';
 const ARCHIVOS = [
   './',
   './index.html',
@@ -23,7 +23,7 @@ self.addEventListener('install', e => {
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
-      .then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(ks => Promise.all(ks.filter(k => k.startsWith("yupavideo-") && k !== CACHE).map(k => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
