@@ -91,7 +91,7 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 .ini-quien b{display:block;color:var(--fuerte);font-weight:600}
 .ini-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:10px;background:var(--panel2);border:1px solid var(--borde);color:var(--txt);font-weight:600;font-size:13.5px;text-decoration:none;cursor:pointer}
 .ini-btn:hover{background:var(--hov)}
-.ini-main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:38px 22px 20px;display:flex;flex-direction:column;gap:18px}
+.ini-main{position:relative;z-index:1;padding:38px clamp(22px,3vw,56px) 20px;display:flex;flex-direction:column;gap:18px}
 .ini-saludo .rot{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.16em;color:var(--turq-t);text-transform:uppercase}
 .ini-saludo h1{font-size:clamp(26px,4vw,38px);font-weight:800;letter-spacing:-.02em;margin:8px 0}
 .ini-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;margin-top:20px}
@@ -113,6 +113,10 @@ label{font-size:14px;color:var(--sub);display:flex;flex-direction:column;gap:6px
 .aviso{color:var(--ambar-t);font-size:14px}
 .giroIni{width:34px;height:34px;border-radius:50%;border:3px solid var(--borde);border-top-color:var(--turq);animation:giraIni .8s linear infinite}
 @keyframes giraIni{to{transform:rotate(360deg)}}
+@media (min-width:1500px){
+  .ini-grid{grid-template-columns:1.3fr 1fr 1fr}
+  .pn.hero{grid-row:auto}
+}
 @media (max-width:900px){
   .ini-grid{grid-template-columns:1fr}
   .pn.hero{grid-row:auto;min-height:0}
