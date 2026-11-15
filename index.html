@@ -15,14 +15,14 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{
   --tinta:#0C1A2E;--turq:#2ED3B7;--ambar:#F2A93B;--gris:#9BB0C9;--claro:#F4F7FA;
   --bg:#0C1A2E;--panel:#12243C;--panel2:#183050;--borde:#24405F;--txt:#F4F7FA;--sub:#9BB0C9;--rojo:#EF5350;
   --campo:#0A1626;--campo2:#0F2036;--fuerte:#fff;--linea:rgba(255,255,255,.07);--vidrio:rgba(12,26,46,.82);
-  --turq-t:#2ED3B7;--rojo-t:var(--rojo-t);--ambar-t:#F2A93B;--hov:#1f3a5e;
+  --turq-t:#2ED3B7;--rojo-t:#FF8A80;--ambar-t:#F2A93B;--hov:#1f3a5e;
   color-scheme:dark;
 }
 /* Tema claro (opcional): el oscuro es el de siempre. Las pantallas de video (cámara del celular, escáner,
@@ -33,7 +33,7 @@
   --turq-t:#0B7F6D;--rojo-t:#B3261E;--ambar-t:#A86A00;--hov:#E3EBF3;
   color-scheme:light;
 }
-#camara,#escaner,.camCard,#progBox,.tag,#cortePC{--txt:#F4F7FA;--sub:#9BB0C9;--panel:#12243C;--panel2:#183050;--borde:#24405F;--campo:#0A1626;--fuerte:#fff;color:#F4F7FA}
+#camara,#escaner,.camCard,#progBox,.tag,#cortePC{--bg:#0D1117;--txt:#F4F7FA;--sub:#A0A9B6;--gris:#A0A9B6;--panel:#161B22;--panel2:#1F2630;--borde:#2E3642;--campo:#0A0D12;--campo2:#12161C;--hov:#2A323D;--fuerte:#fff;--turq-t:#2ED3B7;--ambar-t:#F2A93B;--rojo-t:#FF8A80;--linea:rgba(255,255,255,.08);color:#F4F7FA}
 :root[data-tema="claro"] .logoNav svg [stroke="#FFFFFF"]{stroke:#0C1A2E}
 :root[data-tema="claro"] .ini-fondo{background:radial-gradient(1100px 600px at 80% -10%,rgba(46,211,183,.20),transparent 60%),radial-gradient(900px 600px at -10% 110%,rgba(242,169,59,.14),transparent 60%)}
 :root[data-tema="claro"] .pn.hero::before{opacity:.2}
@@ -229,6 +229,7 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
 #dlgCel p{color:var(--txt);font-size:16px}
 #dlgCel .bts{display:flex;gap:10px;justify-content:flex-end}
 </style>
+<link rel="stylesheet" href="../portal/tema.css">
 </head>
 <body>
 
