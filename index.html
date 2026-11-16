@@ -228,9 +228,16 @@ input[type=checkbox]{width:auto;accent-color:var(--turq)}
 #dlgCel .caja{background:var(--panel);border:1px solid var(--borde);border-radius:14px;padding:20px;max-width:360px;width:100%;display:flex;flex-direction:column;gap:16px}
 #dlgCel p{color:var(--txt);font-size:16px}
 #dlgCel .bts{display:flex;gap:10px;justify-content:flex-end}
+/* ---------- movimiento al pasar el cursor, como los botones de Yupafinanzas (pedido de Christian, 2026-11-15) ---------- */
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+  button{transition:translate .16s cubic-bezier(.2,.8,.2,1),scale .14s,box-shadow .2s,border-color .2s}
+  button:not(:disabled):hover{translate:0 -2px;box-shadow:0 12px 24px -14px var(--turq)}
+  button:not(:disabled):active{translate:0 0;scale:.97}
+  .pn{transition:translate .2s cubic-bezier(.2,.8,.2,1),border-color .2s}
+  .pn:hover{translate:0 -3px;border-color:color-mix(in srgb,var(--k,var(--turq-t)) 60%,var(--borde))}
+}
 </style>
-<link rel="stylesheet" href="../portal/tema.css">
-</head>
+<link rel="stylesheet" href="../portal/tema.css"></head>
 <body>
 
 <!-- ============ INICIO ============ -->
